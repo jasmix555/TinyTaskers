@@ -1,12 +1,11 @@
-import './App.css';
+// src/App.tsx
+import { Auth } from './components';
 
 const App = () => {
   return (
     <>
-      <div>
-        <h1>New Project</h1>
-        <p>Text</p>
-      </div>
+      <h1>Welcome to Your App</h1>
+      <Auth />
     </>
   );
 };
