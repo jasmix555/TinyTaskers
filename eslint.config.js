@@ -1,32 +1,39 @@
-import globals from 'globals';
 import pluginJs from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin'; // Correct import for the plugin
-import pluginReact from 'eslint-plugin-react';
-import pluginReactHooks from 'eslint-plugin-react-hooks'; // Include React Hooks plugin
+import pluginPrettier from 'eslint-config-prettier';
+import pluginReactConfig from 'eslint-plugin-react/configs/recommended.js';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
+/** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
+  { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.strict,
   {
-    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
-    languageOptions: {
-      globals: globals.browser,
-      parser: '@typescript-eslint/parser', // Specify TypeScript parser
-      parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true, // Enable JSX parsing
-        },
-      },
+    ignores: ['./dist'],
+    plugins: {
+      react: pluginReactConfig.plugins.react,
+      'react-hooks': pluginReactHooks,
     },
+    settings: { react: { version: 'detect' } },
     rules: {
-      // Custom rules can be added here
-      // For example, enforce hooks rules
-      'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
-      'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
+      ...pluginReactConfig.rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/button-has-type': 'error',
+      'react/function-component-definition': [
+        2,
+        { namedComponents: 'arrow-function' },
+      ],
+      'react/jsx-no-leaked-render': [
+        'error',
+        {
+          validStrategies: ['ternary'],
+        },
+      ],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
-  pluginJs.configs.recommended,
-  tseslint.configs.recommended,
-  pluginReact.configs.recommended, // Updated to use recommended instead of flat
-  pluginReactHooks.configs.recommended, // Include recommended hooks rules
+  pluginPrettier,
 ];
