@@ -5,6 +5,7 @@ const App = () => {
     <>
       <div>
         <h1>New Project</h1>
+        <p>Text</p>
       </div>
     </>
   );
