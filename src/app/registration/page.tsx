@@ -1,14 +1,25 @@
 "use client";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation"; // Use Next.js navigation hook
 
 import {supabase} from "@/api/supabase";
+import {useAuth} from "@/hooks/useAuth"; // Import the custom useAuth hook
 
 const Registration = () => {
+  const {user} = useAuth(); // Get user from useAuth
+  const router = useRouter(); // Initialize Next.js router
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
+
+  // Redirect to index page if the user is logged in
+  useEffect(() => {
+    if (user) {
+      router.push("/"); // Redirect to the index page
+    }
+  }, [user, router]);
 
   const handleLogin = async () => {
     const {error} = await supabase.auth.signInWithPassword({email, password});
