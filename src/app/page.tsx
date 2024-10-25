@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <div className="">
       <h1>Hello, {user.email}!</h1>
-      <button className="bg-red-500 text-white rounded px-8 py-2 mt-4" onClick={handleLogout}>
+      <button className="mt-4 rounded bg-red-500 px-8 py-2 text-white" onClick={handleLogout}>
         Logout
       </button>
     </div>
