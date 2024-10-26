@@ -95,6 +95,10 @@ export default function SignUp() {
     }
   };
 
+  const handleGoToLogin = () => {
+    router.push("/login"); // Navigate to the login page
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="container mx-auto max-w-md">
@@ -107,10 +111,15 @@ export default function SignUp() {
         {error && <p className="mb-4 text-center text-red-600">{error}</p>}
         {verificationSent && (
           <p className="mb-4 text-center text-green-600">
-            メールに確認リンクが送信されました。受信トレイを確認してください。 ({email})
+            メールに確認リンクが送信されました。
+            <br /> ({email})
+            <br />
+            受信トレイを確認してください。
+            <br />
             <button className="ml-2 text-blue-500 underline" onClick={handleResendVerification}>
               再送信
             </button>
+            <br />
             {timer !== null && (
               <span className="ml-2 text-sm text-gray-600">{`(${timer}秒後に再送信可能)`}</span>
             )}
@@ -156,6 +165,11 @@ export default function SignUp() {
         ) : (
           ""
         )}
+        <div className="mt-4 text-center">
+          <button className="text-orange-300 underline" onClick={handleGoToLogin}>
+            ログインページに戻る
+          </button>
+        </div>
       </div>
     </div>
   );
