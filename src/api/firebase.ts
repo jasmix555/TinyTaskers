@@ -1,17 +1,17 @@
-// Import the functions you need from the SDKs you need
+// src/api/firebase.ts
+
 import {initializeApp} from "firebase/app";
 import {getAuth} from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 import {
   FIREBASE_API_KEY,
-  FIREBASE_APP_ID,
   FIREBASE_AUTH_DOMAIN,
-  FIREBASE_MESSAGING_SENDER_ID,
   FIREBASE_PROJECT_ID,
   FIREBASE_STORAGE_BUCKET,
-} from "@/constant/env";
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_DATABASE_URL,
+} from "@/constant/env"; // Adjust the import path if necessary
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,8 +21,10 @@ const firebaseConfig = {
   storageBucket: FIREBASE_STORAGE_BUCKET,
   messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
   appId: FIREBASE_APP_ID,
+  databaseURL: FIREBASE_DATABASE_URL,
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

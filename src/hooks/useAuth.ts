@@ -1,7 +1,9 @@
+// src/hooks/useAuth.ts
+
 import {useState, useEffect} from "react";
 import {onAuthStateChanged, User} from "firebase/auth";
 
-import {auth} from "../api/firebase";
+import {auth} from "../api/firebase"; // Adjust the import path if necessary
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -13,7 +15,7 @@ export function useAuth() {
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => unsubscribe(); // Clean up subscription on unmount
   }, []);
 
   return {user, loading};
