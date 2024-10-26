@@ -11,7 +11,7 @@ const LogoutButton = ({className}: {className?: string}) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push("/login"); // Redirect to login page after logout
+      router.push("/welcome"); // Redirect to welcome page after logout
     } catch (error) {
       console.error("Error logging out: ", error);
     }

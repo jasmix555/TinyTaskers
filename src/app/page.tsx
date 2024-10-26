@@ -7,10 +7,10 @@ import {onAuthStateChanged} from "firebase/auth";
 import UserGreeting from "@/components/UserGreeting";
 import ChildPreview from "@/components/ChildPreview";
 import LogoutButton from "@/components/LogoutButton";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {auth, db} from "@/api/firebase";
 import {Child} from "@/types/ChildProps";
 import {User} from "@/types/UserProps";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 const HomePage = () => {
   const [registeredChildren, setRegisteredChildren] = useState<Child[]>([]);
@@ -19,56 +19,59 @@ const HomePage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // Function to fetch children data
     const fetchChildren = async (uid: string) => {
       try {
         const childrenRef = collection(db, `users/${uid}/children`);
         const childrenSnapshot = await getDocs(childrenRef);
-        const childrenData: Child[] = childrenSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Child[];
+        const childrenData = childrenSnapshot.docs.map(
+          (doc) => ({id: doc.id, ...doc.data()}) as Child,
+        );
 
         setRegisteredChildren(childrenData);
       } catch (error) {
-        console.error("Error fetching children: ", error);
+        console.error("Error fetching children:", error);
       }
     };
 
+    // Function to fetch user data
     const fetchUserData = async (uid: string) => {
       try {
         const userDocRef = doc(db, "users", uid);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-          const userData = userDoc.data() as User;
-
-          setUser(userData);
+          setUser(userDoc.data() as User);
         } else {
-          console.error("No such user document!");
+          console.error("User document not found.");
         }
       } catch (error) {
-        console.error("Error fetching user data: ", error);
+        console.error("Error fetching user data:", error);
       }
     };
 
-    // Listen for authentication state changes
+    // Authentication state listener
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         fetchChildren(currentUser.uid);
         fetchUserData(currentUser.uid);
+      } else {
+        router.push("/welcome"); // Redirect to welcome page if not authenticated
       }
-      setLoading(false); // Move this to after both fetch calls
+      setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup subscription on unmount
-  }, []);
+    return () => unsubscribe(); // Clean up subscription on component unmount
+  }, [router]);
 
+  // Handler for navigating to child registration page
   const handleRegisterChildClick = () => {
     router.push("/child-registration");
   };
 
+  // Render loading spinner while fetching data
   if (loading) {
-    return <LoadingSpinner />; // Show loading spinner while fetching data
+    return <LoadingSpinner />;
   }
 
   return (

@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {onAuthStateChanged, User} from "firebase/auth";
 import {doc, getDoc} from "firebase/firestore";
 
-import {auth, db} from "../api/firebase"; // Adjust the import path if necessary
+import {auth, db} from "../api/firebase";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -14,25 +14,22 @@ export function useAuth() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-
-        // Fetch user document to check for username and child info
-        const userDoc = await getDoc(doc(db, "users", user.uid)); // Assuming user info is stored under 'users' collection
+        const userDoc = await getDoc(doc(db, "users", user.uid));
 
         if (userDoc.exists()) {
           const userData = userDoc.data();
 
-          setHasUsername(!!userData.username); // Check if username exists
+          setHasUsername(!!userData.username);
 
-          setHasChildInfo(!!userData.children && userData.children.length > 0); // Check if children exist
-        } else {
-          setHasUsername(false);
-          setHasChildInfo(false);
+          setHasChildInfo(!!userData.children && userData.children.length > 0);
         }
+      } else {
+        setUser(null); // Reset user state if not logged in
       }
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Clean up subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   return {user, loading, hasUsername, hasChildInfo};

@@ -11,106 +11,152 @@ export default function SignUp() {
   const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [timer, setTimer] = useState<number | null>(null); // Timer state
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setError(null); // Reset error state
+    setError(null);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Send a verification email
       await sendEmailVerification(user);
-
-      // Show the confirmation/loading page
+      setVerificationSent(true);
       setIsConfirming(true);
+      startTimer(); // Start the timer for email verification expiration
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("An unknown error occurred");
+        setError("不明なエラーが発生しました");
       }
       console.error("Signup Error:", error);
     }
   };
 
+  const startTimer = () => {
+    // Set a timer for 5 minutes (300 seconds)
+    const timerDuration = 300; // seconds
+
+    setTimer(timerDuration);
+
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev === 1) {
+          clearInterval(interval); // Stop the timer
+
+          return null; // Reset the timer state
+        }
+
+        return prev! - 1; // Decrement the timer
+      });
+    }, 1000); // Update every second
+  };
+
   useEffect(() => {
-    // Polling function to check for email verification
     const pollForEmailVerification = async () => {
       const interval = setInterval(async () => {
         const user = auth.currentUser;
 
         if (user) {
-          await user.reload(); // Reload user to get the latest info
+          await user.reload();
           if (user.emailVerified) {
-            setIsVerified(true); // Set verified state
-            clearInterval(interval); // Stop polling
+            setIsVerified(true);
+            clearInterval(interval);
           }
         }
       }, 3000); // Check every 3 seconds
 
-      return () => clearInterval(interval); // Cleanup on unmount
+      return () => clearInterval(interval);
     };
 
     if (isConfirming) {
-      pollForEmailVerification(); // Start polling if confirming
+      pollForEmailVerification();
     }
-  }, [isConfirming]); // Dependency on isConfirming
+  }, [isConfirming]);
 
   useEffect(() => {
     if (isVerified) {
-      router.push("/username"); // Redirect to username setup page
+      router.push("/username");
     }
-  }, [isVerified, router]); // Redirect when verified
+  }, [isVerified, router]);
+
+  const handleResendVerification = async () => {
+    const user = auth.currentUser;
+
+    if (user) {
+      await sendEmailVerification(user);
+      setError(null);
+      setVerificationSent(true);
+      startTimer(); // Restart the timer on resend
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-3xl font-bold">{isConfirming ? "Confirm Your Email" : "Sign Up"}</h1>
-      {error && <p className="mb-4 text-red-500">{error}</p>}
-      {!isConfirming ? (
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="email">
-              Email address
-            </label>
-            <input
-              required
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <input
-              required
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-            type="submit"
-          >
-            Register
-          </button>
-        </form>
-      ) : (
-        <div>
-          <p className="mb-4">
-            A verification link has been sent to your email. Please check your inbox.
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="container mx-auto max-w-md">
+        <h1 className="mb-4 text-center text-3xl font-bold">
+          {isConfirming ? "メール確認中" : "アプリをはじめよう"}
+        </h1>
+        <p className="mb-4 text-center text-sm">
+          {isConfirming ? " " : "有効なメールアドレスを入力してください。"}
+        </p>
+        {error && <p className="mb-4 text-center text-red-600">{error}</p>}
+        {verificationSent && (
+          <p className="mb-4 text-center text-green-600">
+            メールに確認リンクが送信されました。受信トレイを確認してください。 ({email})
+            <button className="ml-2 text-blue-500 underline" onClick={handleResendVerification}>
+              再送信
+            </button>
+            {timer !== null && (
+              <span className="ml-2 text-sm text-gray-600">{`(${timer}秒後に再送信可能)`}</span>
+            )}
           </p>
-          <p>We are checking your verification...</p>
-        </div>
-      )}
+        )}
+        {!isConfirming ? (
+          <form className="flex flex-col gap-8 rounded-lg px-6 py-10" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              <div className="relative mb-4">
+                <input
+                  required
+                  className="w-full border-0 border-b-4 border-black bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
+                  placeholder="メールアドレス"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="relative mb-4">
+                <input
+                  required
+                  className="w-full border-0 border-b-4 border-black bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
+                  placeholder="パスワード"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <button
+              className={`w-full rounded-full py-2 font-bold text-white transition duration-100 ease-in-out ${
+                !email || !password
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "bg-orange-300 hover:bg-orange-200"
+              }`}
+              disabled={!email || !password} // Disable button if email or password is empty
+              type="submit"
+            >
+              登録
+            </button>
+          </form>
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 }
