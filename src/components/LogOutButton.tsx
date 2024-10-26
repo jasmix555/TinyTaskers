@@ -19,7 +19,7 @@ const LogoutButton = ({className}: {className?: string}) => {
 
   return (
     <button
-      className={`ml-2 mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 ${className}`}
+      className={`ml-2 mt-4 rounded-full border-2 border-red-600 bg-none px-4 py-2 text-red-600 transition duration-100 ease-in-out hover:bg-red-600 hover:text-white ${className}`}
       onClick={handleLogout}
     >
       Logout

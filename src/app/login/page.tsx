@@ -87,7 +87,8 @@ export default function Login() {
 
           <div className="mt-6 flex flex-col gap-4">
             <button
-              className="w-full rounded-full bg-orange-300 py-2 font-bold text-white transition duration-100 ease-in-out hover:bg-orange-200"
+              className={`w-full rounded-full py-2 font-bold text-white transition duration-100 ease-in-out ${email && password ? "bg-orange-300 hover:bg-orange-200" : "cursor-not-allowed bg-gray-300"}`}
+              disabled={!email || !password} // Disable if either field is empty
               type="submit"
             >
               ログイン
