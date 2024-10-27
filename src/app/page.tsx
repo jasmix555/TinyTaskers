@@ -8,7 +8,6 @@ import {onAuthStateChanged} from "firebase/auth";
 import UserGreeting from "@/components/UserGreeting";
 import ChildrenList from "@/components/ChildrenList";
 import LogoutButton from "@/components/LogoutButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import {auth, db} from "@/api/firebase";
 import {Child} from "@/types/ChildProps";
 import {User} from "@/types/UserProps";
@@ -83,7 +82,11 @@ const HomePage = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h1 className="text-3xl font-bold">Loading...</h1>
+      </div>
+    );
   }
 
   return (
