@@ -134,11 +134,7 @@ const ChildRegistration = () => {
     <div>
       <h1 className="text-2xl font-bold">Child Registration</h1>
       {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-      <ChildForm
-        editingChild={editingChild}
-        setEditingChild={setEditingChild}
-        onSubmit={handleChildSubmit}
-      />
+      <ChildForm onSubmit={handleChildSubmit} />
       <h2 className="mb-4 mt-6 text-xl font-bold">Registered Children</h2>
       {loading ? (
         <p>Loading...</p>

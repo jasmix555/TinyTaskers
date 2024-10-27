@@ -1,18 +1,14 @@
+// components/ChildPreview.tsx
+"use client";
 import Image from "next/image";
+
+import DeleteButton from "./DeleteButton";
 
 import {ChildPreviewProps} from "@/types/ChildProps";
 
-const ChildPreview = ({child, onEdit, onDelete}: ChildPreviewProps) => {
+const ChildPreview = ({child, onDelete, onEdit}: ChildPreviewProps) => {
   const handleEdit = () => {
-    onEdit(child);
-  };
-
-  const handleDelete = () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this child?");
-
-    if (confirmDelete) {
-      onDelete(child.id);
-    }
+    onEdit?.(child); // Call the onEdit function only if it's defined
   };
 
   return (
@@ -38,12 +34,11 @@ const ChildPreview = ({child, onEdit, onDelete}: ChildPreviewProps) => {
       >
         Edit
       </button>
-      <button
-        className="mt-2 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-        onClick={handleDelete}
-      >
-        Delete
-      </button>
+      <DeleteButton
+        childId={child.id}
+        confirmMessage={`Are you sure you want to delete ${child.name}?`}
+        onDeleteSuccess={() => onDelete?.(child.id)} // Call onDelete only if it's defined
+      />
     </div>
   );
 };

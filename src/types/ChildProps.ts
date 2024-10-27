@@ -3,12 +3,13 @@ export interface Child {
   id: string;
   name: string;
   gender: string;
-  picture: string | null;
+  picture: string;
   birthday: string;
 }
 
+// types/ChildProps.ts
 export interface ChildPreviewProps {
   child: Child;
   onEdit: (child: Child) => void;
-  onDelete: (id: string) => void;
+  onDelete: (childId: string) => void;
 }

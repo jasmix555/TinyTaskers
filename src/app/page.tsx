@@ -19,21 +19,21 @@ const HomePage = () => {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
+  const fetchChildren = async (uid: string) => {
+    try {
+      const childrenRef = collection(db, `users/${uid}/children`);
+      const childrenSnapshot = await getDocs(childrenRef);
+      const childrenData = childrenSnapshot.docs.map(
+        (doc) => ({id: doc.id, ...doc.data()}) as Child,
+      );
+
+      setRegisteredChildren(childrenData);
+    } catch (error) {
+      console.error("Error fetching children:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchChildren = async (uid: string) => {
-      try {
-        const childrenRef = collection(db, `users/${uid}/children`);
-        const childrenSnapshot = await getDocs(childrenRef);
-        const childrenData = childrenSnapshot.docs.map(
-          (doc) => ({id: doc.id, ...doc.data()}) as Child,
-        );
-
-        setRegisteredChildren(childrenData);
-      } catch (error) {
-        console.error("Error fetching children:", error);
-      }
-    };
-
     const fetchUserData = async (uid: string) => {
       try {
         const userDocRef = doc(db, "users", uid);
@@ -67,12 +67,19 @@ const HomePage = () => {
   };
 
   const handleEditChild = (child: Child) => {
-    console.log("Editing child:", child);
+    router.push(`/child-registration?id=${child.id}`);
   };
 
-  const handleDeleteChild = (childId: string) => {
+  const handleDeleteChild = async (childId: string) => {
     console.log("Deleting child with ID:", childId);
+
     setRegisteredChildren((prev) => prev.filter((child) => child.id !== childId));
+
+    const currentUser = auth.currentUser;
+
+    if (currentUser) {
+      await fetchChildren(currentUser.uid);
+    }
   };
 
   if (loading) {
@@ -83,9 +90,11 @@ const HomePage = () => {
     <div className="p-4">
       <UserGreeting user={user} />
       <h2 className="mb-4 mt-8 text-xl font-bold">Registered Children</h2>
-      <ChildrenList onDelete={handleDeleteChild} onEdit={handleEditChild}>
-        {registeredChildren}
-      </ChildrenList>
+      <ChildrenList
+        registeredChildren={registeredChildren} // Pass registeredChildren here
+        onDelete={handleDeleteChild}
+        onEdit={handleEditChild}
+      />
       <button
         className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         onClick={handleRegisterChildClick}

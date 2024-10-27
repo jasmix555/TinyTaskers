@@ -32,4 +32,4 @@ const auth = getAuth(app);
 const db = getFirestore(app); // Initialize Firestore
 const storage = getStorage(app); // Initialize Storage
 
-export {auth, db, storage}; // Export Firestore along with auth
+export {auth, db, storage}; // Export Firestore along with auth and storage

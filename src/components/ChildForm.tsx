@@ -6,16 +6,14 @@ import {FaCamera} from "react-icons/fa"; // Importing camera icon from React Ico
 import {Child} from "@/types/ChildProps";
 
 interface ChildFormProps {
-  editingChild: Child | null;
   onSubmit: (childData: Child) => void;
-  setEditingChild: (child: Child | null) => void;
 }
 
-const ChildForm = ({editingChild, onSubmit, setEditingChild}: ChildFormProps) => {
-  const [childName, setChildName] = useState(editingChild ? editingChild.name : "");
-  const [gender, setGender] = useState(editingChild ? editingChild.gender : "M");
+const ChildForm = ({onSubmit}: ChildFormProps) => {
+  const [childName, setChildName] = useState("");
+  const [gender, setGender] = useState("M");
   const [picture, setPicture] = useState<File | null>(null);
-  const [birthday, setBirthday] = useState(editingChild ? editingChild.birthday : "");
+  const [birthday, setBirthday] = useState("");
   const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(null);
 
   const uploadPicture = async (file: File): Promise<string | null> => {
@@ -40,7 +38,7 @@ const ChildForm = ({editingChild, onSubmit, setEditingChild}: ChildFormProps) =>
 
     const pictureUrl = picture ? await uploadPicture(picture) : null;
     const childData: Child = {
-      id: editingChild ? editingChild.id : "", // Update the ID only if editing
+      id: "", // ID will be generated in Firestore
       name: childName,
       gender,
       picture: pictureUrl,
@@ -56,7 +54,6 @@ const ChildForm = ({editingChild, onSubmit, setEditingChild}: ChildFormProps) =>
     setGender("M");
     setPicture(null);
     setBirthday("");
-    setEditingChild(null); // Reset editing state
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -81,8 +78,8 @@ const ChildForm = ({editingChild, onSubmit, setEditingChild}: ChildFormProps) =>
               src={URL.createObjectURL(picture)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-100">
-              <FaCamera className="h-6 w-6 text-gray-400" />
+            <div className="flex h-full w-full items-center justify-center bg-gray-200">
+              <FaCamera className="h-6 w-6 text-gray-300" />
             </div>
           )}
           <button
@@ -152,7 +149,7 @@ const ChildForm = ({editingChild, onSubmit, setEditingChild}: ChildFormProps) =>
         />
       </div>
       <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" type="submit">
-        {editingChild ? "Update Child" : "Register Child"}
+        Register Child
       </button>
     </form>
   );
