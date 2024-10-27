@@ -1,11 +1,12 @@
-"use client"; // Ensure this file is a client component
+// HomePage.tsx
+"use client";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {collection, getDocs, doc, getDoc} from "firebase/firestore";
 import {onAuthStateChanged} from "firebase/auth";
 
 import UserGreeting from "@/components/UserGreeting";
-import ChildPreview from "@/components/ChildPreview";
+import ChildrenList from "@/components/ChildrenList";
 import LogoutButton from "@/components/LogoutButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import {auth, db} from "@/api/firebase";
@@ -19,7 +20,6 @@ const HomePage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Function to fetch children data
     const fetchChildren = async (uid: string) => {
       try {
         const childrenRef = collection(db, `users/${uid}/children`);
@@ -34,7 +34,6 @@ const HomePage = () => {
       }
     };
 
-    // Function to fetch user data
     const fetchUserData = async (uid: string) => {
       try {
         const userDocRef = doc(db, "users", uid);
@@ -50,26 +49,32 @@ const HomePage = () => {
       }
     };
 
-    // Authentication state listener
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         fetchChildren(currentUser.uid);
         fetchUserData(currentUser.uid);
       } else {
-        router.push("/welcome"); // Redirect to welcome page if not authenticated
+        router.push("/welcome");
       }
       setLoading(false);
     });
 
-    return () => unsubscribe(); // Clean up subscription on component unmount
+    return () => unsubscribe();
   }, [router]);
 
-  // Handler for navigating to child registration page
   const handleRegisterChildClick = () => {
     router.push("/child-registration");
   };
 
-  // Render loading spinner while fetching data
+  const handleEditChild = (child: Child) => {
+    console.log("Editing child:", child);
+  };
+
+  const handleDeleteChild = (childId: string) => {
+    console.log("Deleting child with ID:", childId);
+    setRegisteredChildren((prev) => prev.filter((child) => child.id !== childId));
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -78,11 +83,9 @@ const HomePage = () => {
     <div className="p-4">
       <UserGreeting user={user} />
       <h2 className="mb-4 mt-8 text-xl font-bold">Registered Children</h2>
-      <div className="grid grid-cols-1 gap-4">
-        {registeredChildren.map((child) => (
-          <ChildPreview key={child.id} child={child} />
-        ))}
-      </div>
+      <ChildrenList onDelete={handleDeleteChild} onEdit={handleEditChild}>
+        {registeredChildren}
+      </ChildrenList>
       <button
         className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         onClick={handleRegisterChildClick}

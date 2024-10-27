@@ -1,5 +1,4 @@
 // types/ChildProps.ts
-
 export interface Child {
   id: string;
   name: string;
@@ -10,4 +9,6 @@ export interface Child {
 
 export interface ChildPreviewProps {
   child: Child;
+  onEdit: (child: Child) => void;
+  onDelete: (id: string) => void;
 }

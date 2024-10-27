@@ -2,10 +2,11 @@ import Link from "next/link";
 
 export default function Welcome() {
   return (
-    <div className="flex min-h-screen flex-col justify-between p-4">
+    <div className="flex min-h-screen flex-col justify-between gap-4 p-4">
+      <div>Logo</div>
       {/* Top part for logo or illustration */}
-      <div className="flex flex-grow flex-col items-center justify-center">
-        <h1 className="mb-4 text-3xl font-bold">ようこそ</h1>
+      <div className="flex flex-grow flex-col items-center justify-center gap-4">
+        <h1 className="text-3xl font-bold">ようこそ</h1>
         <p className="text-center">
           楽しく学んで、目標達成！ <br />
           親子で育む、成長と絆のアプリ！
@@ -13,7 +14,7 @@ export default function Welcome() {
       </div>
 
       {/* Bottom part for buttons */}
-      <div className="mb-10 flex justify-between space-x-4 text-center">
+      <div className="flex justify-between space-x-4 text-center">
         <Link
           className="w-full rounded-full bg-black px-4 py-2 font-bold text-white transition duration-100 ease-in hover:bg-gray-500"
           href="/login"
@@ -27,6 +28,13 @@ export default function Welcome() {
           新規登録
         </Link>
       </div>
+
+      <Link
+        className="mb-14 w-full rounded-full bg-orange-300 px-4 py-2 text-center font-bold text-white"
+        href={"/child-login"}
+      >
+        子供アカウントログイン
+      </Link>
     </div>
   );
 }
