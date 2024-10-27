@@ -1,13 +1,11 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import {getDoc, doc} from "firebase/firestore";
+import {collection, getDocs, query, where} from "firebase/firestore";
 
 import {db} from "@/api/firebase";
-import {Child} from "@/types/ChildProps";
 
-const ChildLogin = ({userId}: {userId: string}) => {
-  // Accept userId as a prop
+const ChildLogin = () => {
   const [childId, setChildId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -22,22 +20,22 @@ const ChildLogin = ({userId}: {userId: string}) => {
     }
 
     try {
-      const childRef = doc(db, `users/${userId}/children/${childId}`); // Use userId from props
-      const docSnapshot = await getDoc(childRef);
+      // Create a query to find the child with the given ID in any user's children collection
+      const q = query(collection(db, "users"), where("children", "array-contains", childId));
+      const querySnapshot = await getDocs(q);
 
-      if (!docSnapshot.exists()) {
+      if (querySnapshot.empty) {
         setError("Child not found. Please check the ID.");
 
         return;
       }
 
-      const childData = docSnapshot.data() as Child;
+      // Assuming each user has only one child with that ID, get the first matching user
+      const userDoc = querySnapshot.docs[0];
+      const userId = userDoc.id; // Get the user ID
 
-      // Store child data in context or state management if needed
-      // Example: setChild(childData);
-
-      // Navigate to the child dashboard
-      router.push(`/child-dashboard/${childId}`); // Update this path accordingly
+      // Now you can navigate to the child dashboard
+      router.push(`/child-dashboard/${userId}/${childId}`); // Pass both userId and childId
     } catch (error) {
       const e = error as Error;
 
