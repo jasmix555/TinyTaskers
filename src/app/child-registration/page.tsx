@@ -131,7 +131,7 @@ const ChildRegistration = () => {
   };
 
   return (
-    <div>
+    <div className="container mx-auto max-w-md p-6">
       <h1 className="text-2xl font-bold">Child Registration</h1>
       {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
       <ChildForm onSubmit={handleChildSubmit} />

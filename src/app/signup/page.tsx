@@ -100,76 +100,77 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="container mx-auto max-w-md">
-        <h1 className="mb-4 text-center text-3xl font-bold">
-          {isConfirming ? "メール確認中" : "アプリをはじめよう"}
-        </h1>
-        <p className="mb-4 text-center text-sm">
-          {isConfirming ? " " : "有効なメールアドレスを入力してください。"}
-        </p>
-        {error && <p className="mb-4 text-center text-red-600">{error}</p>}
-        {verificationSent && (
-          <p className="mb-4 text-center text-green-600">
-            メールに確認リンクが送信されました。
-            <br /> ({email})
-            <br />
-            受信トレイを確認してください。
-            <br />
-            <button className="ml-2 text-blue-500 underline" onClick={handleResendVerification}>
-              再送信
-            </button>
-            <br />
-            {timer !== null && (
-              <span className="ml-2 text-sm text-gray-600">{`(${timer}秒後に再送信可能)`}</span>
-            )}
-          </p>
-        )}
-        {!isConfirming ? (
-          <form className="flex flex-col gap-8 rounded-lg px-6 py-10" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-4">
-              <div className="relative mb-4">
-                <input
-                  required
-                  className="w-full border-0 border-b-4 border-black bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
-                  placeholder="メールアドレス"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="relative mb-4">
-                <input
-                  required
-                  className="w-full border-0 border-b-4 border-black bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
-                  placeholder="パスワード"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button
-              className={`w-full rounded-full py-2 font-bold text-white transition duration-100 ease-in-out ${
-                !email || !password
-                  ? "cursor-not-allowed bg-gray-400"
-                  : "bg-orange-300 hover:bg-orange-200"
-              }`}
-              disabled={!email || !password} // Disable button if email or password is empty
-              type="submit"
-            >
-              登録
-            </button>
-          </form>
-        ) : (
-          ""
-        )}
-        <div className="mt-4 text-center">
-          <button className="text-orange-300 underline" onClick={handleGoToLogin}>
-            ログインページに戻る
+    <div className="container mx-auto max-w-md">
+      {error && <p className="mb-4 text-center text-red-600">{error}</p>}
+      {verificationSent && (
+        <p className="mb-4 text-center text-green-600">
+          メールに確認リンクが送信されました。
+          <br /> ({email})
+          <br />
+          受信トレイを確認してください。
+          <br />
+          <button className="ml-2 text-blue-500 underline" onClick={handleResendVerification}>
+            再送信
           </button>
-        </div>
+          <br />
+          {timer !== null && (
+            <span className="ml-2 text-sm text-gray-600">{`(${timer}秒後に再送信可能)`}</span>
+          )}
+        </p>
+      )}
+      {!isConfirming ? (
+        <form
+          className="flex flex-col content-center justify-center gap-10 rounded-lg p-6"
+          onSubmit={handleSubmit}
+        >
+          <h1 className="mb-4 text-center text-3xl font-bold">
+            {isConfirming ? "メール確認中" : "アプリをはじめよう"}
+          </h1>
+          <p className="mb-4 text-center text-sm">
+            {isConfirming ? " " : "有効なメールアドレスを入力してください。"}
+          </p>
+          <div className="flex flex-col gap-4">
+            <div className="relative mb-4">
+              <input
+                required
+                className="w-full border-0 border-b-2 border-gray-500 bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
+                placeholder="メールアドレス"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="relative mb-4">
+              <input
+                required
+                className="w-full border-0 border-b-2 border-gray-500 bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
+                placeholder="パスワード"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button
+            className={`w-full rounded py-2 font-bold text-white transition duration-100 ease-in-out ${
+              !email || !password
+                ? "cursor-not-allowed bg-gray-400"
+                : "bg-orange-300 hover:bg-orange-200"
+            }`}
+            disabled={!email || !password} // Disable button if email or password is empty
+            type="submit"
+          >
+            メールアドレスを確認
+          </button>
+        </form>
+      ) : (
+        ""
+      )}
+      <div className="mt-4 text-center">
+        <button className="text-orange-300 underline" onClick={handleGoToLogin}>
+          ログインページに戻る
+        </button>
       </div>
     </div>
   );

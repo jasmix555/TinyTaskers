@@ -10,7 +10,8 @@ interface ChildrenListProps {
 
 const ChildrenList = ({onEdit, onDelete, registeredChildren}: ChildrenListProps) => {
   return (
-    <div>
+    // Add a grid class to the parent div
+    <div className="flex flex-col gap-4">
       {registeredChildren.length === 0 ? (
         <p className="text-center text-gray-500">No children registered yet.</p>
       ) : (

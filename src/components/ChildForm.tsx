@@ -41,7 +41,7 @@ const ChildForm = ({onSubmit}: ChildFormProps) => {
       id: "", // ID will be generated in Firestore
       name: childName,
       gender,
-      picture: pictureUrl,
+      picture: pictureUrl || "",
       birthday,
     };
 
@@ -67,7 +67,7 @@ const ChildForm = ({onSubmit}: ChildFormProps) => {
   };
 
   return (
-    <form className="mx-auto max-w-md rounded bg-white p-4 shadow-md" onSubmit={handleSubmit}>
+    <form className="max-w-md rounded bg-white px-10 py-4 shadow-md" onSubmit={handleSubmit}>
       {/* Circular Picture Section */}
       <div className="relative mb-4 flex justify-center">
         <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-gray-300">
@@ -78,7 +78,7 @@ const ChildForm = ({onSubmit}: ChildFormProps) => {
               src={URL.createObjectURL(picture)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-200">
+            <div className="flex h-full w-full items-center justify-center bg-gray-50">
               <FaCamera className="h-6 w-6 text-gray-300" />
             </div>
           )}

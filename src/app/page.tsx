@@ -90,11 +90,11 @@ const HomePage = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto max-w-md p-4">
       <UserGreeting user={user} />
       <h2 className="mb-4 mt-8 text-xl font-bold">Registered Children</h2>
       <ChildrenList
-        registeredChildren={registeredChildren} // Pass registeredChildren here
+        registeredChildren={registeredChildren}
         onDelete={handleDeleteChild}
         onEdit={handleEditChild}
       />
