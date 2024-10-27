@@ -1,3 +1,4 @@
+// app/components/ChildRegistration.tsx
 "use client";
 import {useEffect, useState} from "react";
 import {collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc} from "firebase/firestore";
@@ -7,7 +8,7 @@ import {ref, deleteObject} from "firebase/storage";
 
 import {Child} from "@/types/ChildProps";
 import ChildForm from "@/components/ChildForm";
-import ChildPreview from "@/components/ChildPreview";
+import ChildrenList from "@/components/ChildrenList"; // Import the new component
 import {auth, db, storage} from "@/api/firebase";
 
 const ChildRegistration = () => {
@@ -71,8 +72,11 @@ const ChildRegistration = () => {
 
         await updateDoc(childRef, childToFirestore);
         setRegisteredChildren((prev) =>
-          prev.map((child) => (child.id === childData.id ? childData : child)),
+          prev.map((child) =>
+            child.id === editingChild.id ? {...editingChild, ...childData} : child,
+          ),
         );
+        setEditingChild(null); // Reset editing state after submission
       } else {
         const docRef = await addDoc(
           collection(db, `users/${currentUser.uid}/children`),
@@ -86,10 +90,6 @@ const ChildRegistration = () => {
     }
   };
 
-  const handleEdit = (child: Child) => {
-    setEditingChild(child);
-  };
-
   const handleDelete = async (id: string) => {
     try {
       const currentUser = auth.currentUser;
@@ -97,28 +97,29 @@ const ChildRegistration = () => {
       if (!currentUser) return;
 
       const childRef = doc(db, `users/${currentUser.uid}/children/${id}`);
+
+      // First, retrieve the child data to delete the image if it exists
       const docSnapshot = await getDoc(childRef);
-
-      if (!docSnapshot.exists()) {
-        console.error("Document does not exist:", childRef.path);
-
-        return;
-      }
-
       const childData = docSnapshot.data() as Child;
-      const imagePath = childData.picture;
 
-      if (typeof imagePath === "string" && imagePath) {
-        const imageRef = ref(storage, imagePath);
+      if (childData) {
+        const imagePath = childData.picture;
 
-        await deleteObject(imageRef);
-        console.log("Image deleted from storage:", imageRef.fullPath);
+        if (typeof imagePath === "string" && imagePath) {
+          const imageRef = ref(storage, imagePath);
+
+          await deleteObject(imageRef);
+          console.log("Image deleted from storage:", imageRef.fullPath);
+        }
+
+        // Delete the document from Firestore
+        await deleteDoc(childRef);
+
+        // Update local state immediately to reflect the deletion
+        setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
       } else {
-        console.warn("No valid image path found for child:", childData.name);
+        console.error("Document does not exist:", childRef.path);
       }
-
-      await deleteDoc(childRef);
-      setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
     } catch (error) {
       const e = error as Error;
 
@@ -134,23 +135,12 @@ const ChildRegistration = () => {
     <div className="container mx-auto max-w-md p-6">
       <h1 className="text-2xl font-bold">Child Registration</h1>
       {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-      <ChildForm onSubmit={handleChildSubmit} />
+      <ChildForm editingChild={editingChild} onSubmit={handleChildSubmit} />
       <h2 className="mb-4 mt-6 text-xl font-bold">Registered Children</h2>
       {loading ? (
         <p>Loading...</p>
-      ) : registeredChildren.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {registeredChildren.map((child) => (
-            <ChildPreview
-              key={child.id}
-              child={child}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          ))}
-        </div>
       ) : (
-        <p>No children registered yet.</p>
+        <ChildrenList registeredChildren={registeredChildren} onDelete={handleDelete} />
       )}
       {registeredChildren.length > 0 ? (
         <button

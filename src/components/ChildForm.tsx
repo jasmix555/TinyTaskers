@@ -1,19 +1,20 @@
 // app/components/ChildForm.tsx
 import {useState, FormEvent, ChangeEvent} from "react";
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
-import {FaCamera} from "react-icons/fa"; // Importing camera icon from React Icons
+import {FaCamera} from "react-icons/fa";
 
 import {Child} from "@/types/ChildProps";
 
 interface ChildFormProps {
   onSubmit: (childData: Child) => void;
+  editingChild: Child | null; // Add this line
 }
 
-const ChildForm = ({onSubmit}: ChildFormProps) => {
-  const [childName, setChildName] = useState("");
-  const [gender, setGender] = useState("M");
+const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
+  const [childName, setChildName] = useState(editingChild ? editingChild.name : ""); // Pre-fill if editing
+  const [gender, setGender] = useState(editingChild ? editingChild.gender : "M"); // Pre-fill if editing
   const [picture, setPicture] = useState<File | null>(null);
-  const [birthday, setBirthday] = useState("");
+  const [birthday, setBirthday] = useState(editingChild ? editingChild.birthday : ""); // Pre-fill if editing
   const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(null);
 
   const uploadPicture = async (file: File): Promise<string | null> => {
@@ -38,10 +39,10 @@ const ChildForm = ({onSubmit}: ChildFormProps) => {
 
     const pictureUrl = picture ? await uploadPicture(picture) : null;
     const childData: Child = {
-      id: "", // ID will be generated in Firestore
+      id: editingChild ? editingChild.id : "", // Keep ID if editing
       name: childName,
       gender,
-      picture: pictureUrl || "",
+      picture: pictureUrl || (editingChild ? editingChild.picture : ""),
       birthday,
     };
 

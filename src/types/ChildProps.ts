@@ -10,6 +10,5 @@ export interface Child {
 // types/ChildProps.ts
 export interface ChildPreviewProps {
   child: Child;
-  onEdit: (child: Child) => void;
   onDelete: (childId: string) => void;
 }

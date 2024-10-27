@@ -1,18 +1,22 @@
 // components/ChildPreview.tsx
 "use client";
 import Image from "next/image";
+import {useRouter} from "next/navigation";
 import {FaClipboard} from "react-icons/fa";
 
 import DeleteButton from "./DeleteButton";
 
 import {ChildPreviewProps} from "@/types/ChildProps";
 
-const ChildPreview = ({child, onDelete, onEdit}: ChildPreviewProps) => {
+const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
+  const router = useRouter();
+
   const handleEdit = () => {
-    onEdit?.(child); // Call the onEdit function only if it's defined
+    // Navigate to the edit page for the selected child using its ID
+    router.push(`/child-registration/${child.id}`);
   };
 
-  // when click button, save to clipboard
+  // When clicking the button, save the child's ID to the clipboard
   const clickToSave = () => {
     navigator.clipboard.writeText(child.id);
     alert("Copied to clipboard");
