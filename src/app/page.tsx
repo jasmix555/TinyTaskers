@@ -23,11 +23,6 @@ const HomePage = () => {
 
   const handleDeleteChild = async (childId: string) => {
     console.log("Deleting child with ID:", childId);
-    // make popup to confirm deletion
-
-    // if confirmed, delete child
-    // if not
-    // return
   };
 
   // Loading state while auth, children or user data is being fetched
@@ -44,10 +39,9 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto max-w-md p-4">
-      <UserGreeting user={displayUser as UserType} /> {/* Ensure compatibility */}
+      <UserGreeting user={displayUser as UserType} />
       <h2 className="mb-4 mt-8 text-xl font-bold">Registered Children</h2>
       <ChildrenList registeredChildren={children} onDelete={handleDeleteChild} />{" "}
-      {/* Use children fetched from hook */}
       <button
         className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         onClick={handleRegisterChildClick}
