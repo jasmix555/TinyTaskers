@@ -1,22 +1,23 @@
-// app/components/ChildRegistration.tsx
 "use client";
 import {useEffect, useState} from "react";
-import {collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc} from "firebase/firestore";
+import {collection, addDoc, updateDoc, doc, getDocs} from "firebase/firestore";
 import {useRouter} from "next/navigation";
 import {onAuthStateChanged} from "firebase/auth";
-import {ref, deleteObject} from "firebase/storage";
 
 import {Child} from "@/types/ChildProps";
 import ChildForm from "@/components/ChildForm";
-import ChildrenList from "@/components/ChildrenList"; // Import the new component
-import {auth, db, storage} from "@/api/firebase";
+import ChildrenList from "@/components/ChildrenList";
+import {useDeleteChild} from "@/hooks"; // Ensure you're importing the custom hook
+import {auth, db} from "@/api/firebase";
 
 const ChildRegistration = () => {
   const [registeredChildren, setRegisteredChildren] = useState<Child[]>([]);
   const [editingChild, setEditingChild] = useState<Child | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); // Add error state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Add success message state
   const router = useRouter();
+  const {deleteChild} = useDeleteChild(); // Use the deleteChild hook
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -33,15 +34,21 @@ const ChildRegistration = () => {
 
   const fetchChildren = async (uid: string) => {
     setLoading(true);
-    const childrenRef = collection(db, `users/${uid}/children`);
-    const childrenSnapshot = await getDocs(childrenRef);
-    const childrenData: Child[] = childrenSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Child[];
+    try {
+      const childrenRef = collection(db, `users/${uid}/children`);
+      const childrenSnapshot = await getDocs(childrenRef);
+      const childrenData: Child[] = childrenSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Child[];
 
-    setRegisteredChildren(childrenData);
-    setLoading(false);
+      setRegisteredChildren(childrenData);
+    } catch (err) {
+      setError("Failed to load children.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChildSubmit = async (childData: Child) => {
@@ -87,43 +94,21 @@ const ChildRegistration = () => {
       }
     } catch (error) {
       console.error("Error adding/updating child:", error);
+      setError("Failed to save child. Please try again.");
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const currentUser = auth.currentUser;
+      await deleteChild(id); // Call the deleteChild hook
 
-      if (!currentUser) return;
-
-      const childRef = doc(db, `users/${currentUser.uid}/children/${id}`);
-
-      // First, retrieve the child data to delete the image if it exists
-      const docSnapshot = await getDoc(childRef);
-      const childData = docSnapshot.data() as Child;
-
-      if (childData) {
-        const imagePath = childData.picture;
-
-        if (typeof imagePath === "string" && imagePath) {
-          const imageRef = ref(storage, imagePath);
-
-          await deleteObject(imageRef);
-          console.log("Image deleted from storage:", imageRef.fullPath);
-        }
-
-        // Delete the document from Firestore
-        await deleteDoc(childRef);
-
-        // Update local state immediately to reflect the deletion
-        setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
-      } else {
-        console.error("Document does not exist:", childRef.path);
-      }
+      // Update local state immediately to reflect the deletion
+      setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
+      setSuccessMessage("Child deleted successfully.");
+      setTimeout(() => setSuccessMessage(null), 3000); // Auto-hide message
     } catch (error) {
-      const e = error as Error;
-
-      console.error("Error deleting child:", e.message);
+      console.error("Error deleting child:", error);
+      setError("Failed to delete the child. Please try again.");
     }
   };
 
@@ -135,6 +120,10 @@ const ChildRegistration = () => {
     <div className="container mx-auto max-w-md p-6">
       <h1 className="text-2xl font-bold">Child Registration</h1>
       {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+      {successMessage && (
+        <div className="mb-4 rounded bg-green-100 p-2 text-green-800">{successMessage}</div>
+      )}{" "}
+      {/* Display success message */}
       <ChildForm editingChild={editingChild} onSubmit={handleChildSubmit} />
       <h2 className="mb-4 mt-6 text-xl font-bold">Registered Children</h2>
       {loading ? (

@@ -2,3 +2,4 @@
 export {useAuth} from "./useAuth";
 export {useFetchChildren} from "./useFetchChildren";
 export {useFetchUser} from "./useFetchUser";
+export {useDeleteChild} from "./useDeleteChild";

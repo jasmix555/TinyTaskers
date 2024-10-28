@@ -1,17 +1,16 @@
 // components/DeleteButton.tsx
 "use client";
-import {ref, deleteObject} from "firebase/storage";
-import {doc, deleteDoc, getDoc} from "firebase/firestore";
-
-import {auth, db, storage} from "@/api/firebase";
+import {useDeleteChild} from "@/hooks/useDeleteChild";
 
 interface DeleteButtonProps {
   childId: string; // Pass the child ID directly to the button
   confirmMessage?: string; // Optional confirmation message
-  onDeleteSuccess: () => void; // Callback to refresh data
+  onDeleteSuccess: () => void; // Callback to refresh data after successful deletion
 }
 
 const DeleteButton = ({childId, confirmMessage, onDeleteSuccess}: DeleteButtonProps) => {
+  const {deleteChild} = useDeleteChild();
+
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
       confirmMessage || "Are you sure you want to delete this child?",
@@ -19,36 +18,9 @@ const DeleteButton = ({childId, confirmMessage, onDeleteSuccess}: DeleteButtonPr
 
     if (confirmDelete) {
       try {
-        const currentUser = auth.currentUser;
-
-        if (!currentUser) return;
-
-        const childRef = doc(db, `users/${currentUser.uid}/children/${childId}`);
-        const docSnapshot = await getDoc(childRef);
-
-        if (!docSnapshot.exists()) {
-          console.error("Document does not exist:", childRef.path);
-
-          return;
-        }
-
-        const childData = docSnapshot.data();
-        const imagePath = childData?.picture;
-
-        if (typeof imagePath === "string" && imagePath) {
-          const imageRef = ref(storage, imagePath);
-
-          await deleteObject(imageRef);
-          console.log("Image deleted from storage:", imageRef.fullPath);
-        } else {
-          console.warn("No valid image path found for child.");
-        }
-
-        await deleteDoc(childRef);
-        console.log("Child document deleted:", childId);
-
-        // Call the onDeleteSuccess callback to refresh data
-        onDeleteSuccess();
+        await deleteChild(childId);
+        console.log("Child deleted successfully:", childId);
+        onDeleteSuccess(); // Trigger callback to refresh data
       } catch (error) {
         console.error("Error deleting child:", error);
         alert("Failed to delete the child. Please try again.");
