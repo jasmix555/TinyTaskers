@@ -1,108 +1,50 @@
+// ChildRegistration.tsx
 "use client";
 import {useEffect, useState} from "react";
-import {collection, addDoc, updateDoc, doc, getDocs} from "firebase/firestore";
 import {useRouter} from "next/navigation";
 import {onAuthStateChanged} from "firebase/auth";
 
 import {Child} from "@/types/ChildProps";
 import ChildForm from "@/components/ChildForm";
 import ChildrenList from "@/components/ChildrenList";
-import {useDeleteChild} from "@/hooks"; // Ensure you're importing the custom hook
-import {auth, db} from "@/api/firebase";
+import {useDeleteChild, useFetchChildren, useAuth, useCreateChild} from "@/hooks";
+import {auth} from "@/api/firebase";
 
 const ChildRegistration = () => {
-  const [registeredChildren, setRegisteredChildren] = useState<Child[]>([]);
-  const [editingChild, setEditingChild] = useState<Child | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Add error state
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Add success message state
+  const {user} = useAuth();
+  const {deleteChild} = useDeleteChild();
   const router = useRouter();
-  const {deleteChild} = useDeleteChild(); // Use the deleteChild hook
+
+  const [editingChild, setEditingChild] = useState<Child | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+  const {children: initialRegisteredChildren, loading} = useFetchChildren(user?.uid || "");
+  const [registeredChildren, setRegisteredChildren] = useState<Child[]>(initialRegisteredChildren);
+
+  const {handleChildSubmit} = useCreateChild(currentUser);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        fetchChildren(currentUser.uid);
-      } else {
-        setRegisteredChildren([]);
-        setLoading(false);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user ? user.uid : null);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const fetchChildren = async (uid: string) => {
-    setLoading(true);
-    try {
-      const childrenRef = collection(db, `users/${uid}/children`);
-      const childrenSnapshot = await getDocs(childrenRef);
-      const childrenData: Child[] = childrenSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Child[];
+  useEffect(() => {
+    setRegisteredChildren(initialRegisteredChildren);
+  }, [initialRegisteredChildren]);
 
-      setRegisteredChildren(childrenData);
-    } catch (err) {
-      setError("Failed to load children.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChildSubmit = async (childData: Child) => {
-    try {
-      const currentUser = auth.currentUser;
-
-      if (!currentUser) return;
-
-      // Validation: Check for required fields
-      if (!childData.name || !childData.gender || !childData.picture || !childData.birthday) {
-        setError("All fields are required.");
-
-        return;
-      }
-
-      // Reset error state if validation passes
-      setError(null);
-
-      const childToFirestore = {
-        name: childData.name,
-        gender: childData.gender,
-        picture: childData.picture,
-        birthday: childData.birthday,
-      };
-
-      if (editingChild) {
-        const childRef = doc(db, `users/${currentUser.uid}/children`, editingChild.id);
-
-        await updateDoc(childRef, childToFirestore);
-        setRegisteredChildren((prev) =>
-          prev.map((child) =>
-            child.id === editingChild.id ? {...editingChild, ...childData} : child,
-          ),
-        );
-        setEditingChild(null); // Reset editing state after submission
-      } else {
-        const docRef = await addDoc(
-          collection(db, `users/${currentUser.uid}/children`),
-          childToFirestore,
-        );
-
-        setRegisteredChildren((prev) => [...prev, {...childData, id: docRef.id}]);
-      }
-    } catch (error) {
-      console.error("Error adding/updating child:", error);
-      setError("Failed to save child. Please try again.");
-    }
+  const handleSubmit = async (childData: Child) => {
+    await handleChildSubmit(childData, editingChild, setRegisteredChildren);
+    setEditingChild(null); // Reset editing state after submission
   };
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteChild(id); // Call the deleteChild hook
-
-      // Update local state immediately to reflect the deletion
+      await deleteChild(id);
       setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
       setSuccessMessage("Child deleted successfully.");
       setTimeout(() => setSuccessMessage(null), 3000); // Auto-hide message
@@ -124,28 +66,23 @@ const ChildRegistration = () => {
         <div className="mb-4 rounded bg-green-100 p-2 text-green-800">{successMessage}</div>
       )}{" "}
       {/* Display success message */}
-      <ChildForm editingChild={editingChild} onSubmit={handleChildSubmit} />
+      <ChildForm editingChild={editingChild} onSubmit={handleSubmit} />
       <h2 className="mb-4 mt-6 text-xl font-bold">Registered Children</h2>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <ChildrenList registeredChildren={registeredChildren} onDelete={handleDelete} />
       )}
-      {registeredChildren.length > 0 ? (
-        <button
-          className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          onClick={handleFinishRegistering}
-        >
-          Finish Registering
-        </button>
-      ) : (
-        <button
-          className="mt-4 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-          onClick={handleFinishRegistering}
-        >
-          Back to Home
-        </button>
-      )}
+      <button
+        className={`mt-4 rounded px-4 py-2 text-white ${
+          registeredChildren.length > 0
+            ? "bg-blue-500 hover:bg-blue-600"
+            : "bg-gray-500 hover:bg-gray-600"
+        }`}
+        onClick={handleFinishRegistering}
+      >
+        {registeredChildren.length > 0 ? "Finish Registering" : "Back to Home"}
+      </button>
     </div>
   );
 };
