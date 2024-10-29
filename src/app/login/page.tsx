@@ -1,19 +1,33 @@
 "use client";
-import {useState, FormEvent} from "react";
+
+import {useState, FormEvent, useEffect} from "react";
 import {signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, Auth} from "firebase/auth";
 import {useRouter} from "next/navigation";
 import {AiOutlineEye, AiOutlineEyeInvisible} from "react-icons/ai";
 import Link from "next/link";
 import Image from "next/image";
 
+import {useAuth} from "@/hooks/useAuth";
 import {auth} from "@/api/firebase";
 
 export default function Login() {
+  const {user, loading} = useAuth(); // Call useAuth to trigger redirect
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/");
+    }
+  }, [loading, user, router]);
+
+  if (loading) return <p>Loading...</p>; // Show loading state
+
+  // If the user is already logged in, render nothing (redirect will happen automatically)
+  if (user) return null;
 
   // Toggle password visibility
   const togglePasswordVisibility = () => {
@@ -23,7 +37,7 @@ export default function Login() {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null); // Reset error on new submit attempt
+    setError(null);
     try {
       await signInWithEmailAndPassword(auth as Auth, email, password);
       router.push("/");
@@ -81,14 +95,13 @@ export default function Login() {
               {isPasswordVisible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
           </div>
-
           {error && <p className="text-center text-red-600">{error}</p>}
         </div>
 
         <div className="flex flex-col gap-8">
           <button
             className={`w-full rounded py-2 font-bold text-white transition duration-100 ease-in-out ${email && password ? "bg-orange-300 hover:bg-orange-200" : "cursor-not-allowed bg-gray-300"}`}
-            disabled={!email || !password} // Disable if either field is empty
+            disabled={!email || !password}
             type="submit"
           >
             ログイン

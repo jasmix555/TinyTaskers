@@ -98,6 +98,11 @@ const ChildEditPage = () => {
     }
   };
 
+  // move back to home page
+  const handleBack = () => {
+    router.push("/");
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!child) return <p>Child data not available.</p>;
@@ -184,9 +189,15 @@ const ChildEditPage = () => {
         />
       </div>
 
-      <button className="rounded bg-blue-500 p-2 text-white" onClick={handleUpdate}>
-        Update Child
-      </button>
+      <div className="flex justify-between">
+        <button className="p-2 text-red-500" onClick={handleBack}>
+          Back
+        </button>
+
+        <button className="rounded bg-blue-500 p-2 text-white" onClick={handleUpdate}>
+          Update Child
+        </button>
+      </div>
     </div>
   );
 };

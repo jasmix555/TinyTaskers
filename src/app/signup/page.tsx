@@ -1,11 +1,14 @@
 "use client";
+import Link from "next/link";
 import {useState, useEffect, FormEvent} from "react";
-import {createUserWithEmailAndPassword, sendEmailVerification} from "firebase/auth";
 import {useRouter} from "next/navigation";
+import {createUserWithEmailAndPassword, sendEmailVerification} from "firebase/auth";
 
+import {useAuth} from "@/hooks/useAuth";
 import {auth} from "@/api/firebase";
 
 export default function SignUp() {
+  const {user, loading} = useAuth(); // Call useAuth to trigger redirect
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isConfirming, setIsConfirming] = useState(false);
@@ -14,6 +17,12 @@ export default function SignUp() {
   const [verificationSent, setVerificationSent] = useState(false);
   const [timer, setTimer] = useState<number | null>(null); // Timer state
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/"); // Redirect if the user is logged in
+    }
+  }, [user, loading, router]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -84,6 +93,12 @@ export default function SignUp() {
     }
   }, [isVerified, router]);
 
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/");
+    }
+  }, [loading, user, router]);
+
   const handleResendVerification = async () => {
     const user = auth.currentUser;
 
@@ -95,9 +110,8 @@ export default function SignUp() {
     }
   };
 
-  const handleGoToLogin = () => {
-    router.push("/login"); // Navigate to the login page
-  };
+  // Return loading or nothing if the user is logged in to avoid rendering the form
+  if (loading || user) return null;
 
   return (
     <div className="container mx-auto max-w-md">
@@ -168,9 +182,9 @@ export default function SignUp() {
         ""
       )}
       <div className="mt-4 text-center">
-        <button className="text-orange-300 underline" onClick={handleGoToLogin}>
+        <Link className="text-orange-300 underline" href={"/login"}>
           ログインページに戻る
-        </button>
+        </Link>
       </div>
     </div>
   );

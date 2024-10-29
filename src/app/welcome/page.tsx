@@ -1,6 +1,25 @@
+"use client";
 import Link from "next/link";
+import {useEffect} from "react";
+import {useRouter} from "next/navigation";
+
+import {useAuth} from "@/hooks/useAuth";
 
 export default function Welcome() {
+  const {user, loading} = useAuth(); // Call useAuth to trigger redirec
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/");
+    }
+  }, [loading, user, router]);
+
+  if (loading) return <p>Loading...</p>; // Show loading state
+
+  // If the user is already logged in, render nothing (redirect will happen automatically)
+  if (user) return null;
+
   return (
     <div className="container mx-auto flex h-screen flex-col justify-between gap-4 p-4">
       <div>Logo</div>

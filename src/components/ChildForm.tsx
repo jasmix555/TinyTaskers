@@ -104,8 +104,9 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
         </label>
         <input
           required
-          className="mt-1 block w-full rounded-md border-2 border-gray-800 px-4 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border-2 border-gray-300 px-4 py-2 text-black placeholder-gray-300 shadow-sm"
           id="childName"
+          placeholder='e.g. "John"'
           type="text"
           value={childName}
           onChange={(e) => setChildName(e.target.value)}
@@ -142,7 +143,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
         </label>
         <input
           required
-          className="mt-1 block w-full rounded-md border-2 border-gray-800 px-4 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border-2 border-gray-300 px-4 py-2 text-black placeholder-gray-300 shadow-sm"
           id="birthday"
           type="date"
           value={birthday}
