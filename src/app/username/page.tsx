@@ -51,7 +51,7 @@ export default function UsernamePage() {
             </label>
             <input
               readOnly
-              className="mt-1 block w-full border-0 border-b-4 border-gray-400 bg-transparent px-3 py-2 text-gray-400 placeholder-gray-500 outline-none"
+              className="mt-1 block w-full border-0 border-b-2 border-gray-400 bg-transparent px-3 py-2 text-gray-400 placeholder-gray-500 outline-none"
               id="email"
               type="email"
               value={email}
@@ -64,7 +64,7 @@ export default function UsernamePage() {
             </label>
             <input
               required
-              className="mt-1 block w-full border-0 border-b-4 border-black bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
+              className="mt-1 block w-full border-0 border-b-2 border-gray-400 bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
               id="username"
               placeholder="ユーザー名を入力してください"
               type="text"

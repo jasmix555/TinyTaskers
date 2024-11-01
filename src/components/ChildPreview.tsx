@@ -27,6 +27,7 @@ const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
       <div className="flex gap-4">
         <div className="mb-4 h-28 w-28 overflow-hidden rounded-full">
           <Image
+            priority
             alt={child.name}
             className="rounded-full"
             height={200}

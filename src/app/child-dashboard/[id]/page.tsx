@@ -1,7 +1,9 @@
+import Loading from "@/components/Loading";
+
 export default function ChildDashboardPage() {
   return (
     <div>
-      <h1>Child Dashboard Page</h1>
+      <Loading />
     </div>
   );
 }
