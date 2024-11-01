@@ -2,20 +2,26 @@
 import {useCallback} from "react";
 import {doc, updateDoc} from "firebase/firestore";
 
-import {db} from "@/api/firebase"; // Adjust the import based on your Firebase setup
-import {Task} from "@/types/Task"; // Assuming you have a Task type defined
+import {db} from "@/api/firebase";
+import {Task} from "@/types/Task";
 
-export const useUpdateTask = () => {
+export function useUpdateTask() {
   const updateTask = useCallback(async (task: Task) => {
-    const taskRef = doc(db, "tasks", task.id); // Assuming tasks are stored in a 'tasks' collection
+    try {
+      const taskRef = doc(db, "tasks", task.id);
 
-    await updateDoc(taskRef, {
-      title: task.title,
-      description: task.description,
-      points: task.points,
-      status: task.status, // Include any other fields you want to update
-    });
+      await updateDoc(taskRef, {
+        title: task.title,
+        description: task.description,
+        points: task.points,
+        status: task.status,
+      });
+      console.log("Task updated successfully");
+    } catch (error) {
+      console.error("Error updating task:", error);
+      throw error; // propagate error for handling in calling component
+    }
   }, []);
 
   return {updateTask};
-};
+}

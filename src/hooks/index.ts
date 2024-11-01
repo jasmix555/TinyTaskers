@@ -6,3 +6,4 @@ export {useDeleteChild} from "./useDeleteChild";
 export {useCreateChild} from "./useCreateChild";
 export {useFetchTasks} from "./useFetchTasks";
 export {useUpdateTask} from "./useUpdateTask";
+export {useDeleteTask} from "./useDeleteTask";
