@@ -4,7 +4,7 @@ import {useState, useEffect} from "react";
 
 import {useAuth, useDeleteChild, useFetchUser, useFetchChildren} from "@/hooks";
 import UserGreeting from "@/components/UserGreeting";
-import ChildrenList from "@/components/ChildrenList";
+import ChildrenList from "@/components/ChildComponents/ChildrenList";
 import LogoutButton from "@/components/LogoutButton";
 import {User as UserType} from "@/types/UserProps";
 import {Child} from "@/types/ChildProps";

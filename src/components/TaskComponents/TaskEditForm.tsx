@@ -1,9 +1,8 @@
-//components/TaskEditForm.tsx
 import {useEffect, useState, FormEvent} from "react";
 import {doc, getDoc} from "firebase/firestore";
 
 import {db} from "@/api/firebase";
-import {Task} from "@/types/Task";
+import {Task} from "@/types/TaskProps";
 import {useUpdateTask} from "@/hooks";
 
 interface TaskEditFormProps {
@@ -35,8 +34,14 @@ const TaskEditForm = ({taskId, onClose, updateTaskList}: TaskEditFormProps) => {
 
     if (task) {
       try {
-        await updateTask(task);
-        updateTaskList(task);
+        await updateTask(taskId, {
+          // Pass taskId and the updated task data
+          title: task.title,
+          description: task.description,
+          points: task.points,
+          status: task.status,
+        });
+        updateTaskList(task); // Optionally pass the updated task
         onClose();
       } catch (error) {
         console.error("Error updating task:", error);
@@ -78,7 +83,7 @@ const TaskEditForm = ({taskId, onClose, updateTaskList}: TaskEditFormProps) => {
           className="mt-1 w-full rounded border border-gray-300 p-2"
           type="number"
           value={task.points}
-          onChange={(e) => setTask({...task, points: parseInt(e.target.value)})}
+          onChange={(e) => setTask({...task, points: parseInt(e.target.value, 10)})}
         />
       </label>
 
@@ -87,9 +92,11 @@ const TaskEditForm = ({taskId, onClose, updateTaskList}: TaskEditFormProps) => {
         <select
           className="mt-1 w-full rounded border border-gray-300 p-2"
           value={task.status}
-          onChange={(e) => setTask({...task, status: e.target.value})}
+          onChange={(e) => setTask({...task, status: e.target.value as Task["status"]})} // Cast to Task['status']
         >
           <option value="pending">Pending</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="confirmation">Confirmation</option>
           <option value="completed">Completed</option>
         </select>
       </label>

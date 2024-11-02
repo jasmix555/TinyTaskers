@@ -15,6 +15,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
   const [gender, setGender] = useState(editingChild ? editingChild.gender : "M"); // Pre-fill if editing
   const [picture, setPicture] = useState<File | null>(null);
   const [birthday, setBirthday] = useState(editingChild ? editingChild.birthday : ""); // Pre-fill if editing
+  const [points, setPoints] = useState<number>(editingChild ? editingChild.points || 0 : 0); // Pre-fill points if editing
   const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(null);
 
   const uploadPicture = async (file: File): Promise<string | null> => {
@@ -44,6 +45,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
       gender,
       picture: pictureUrl || (editingChild ? editingChild.picture : ""),
       birthday,
+      points, // Include points in child data
     };
 
     onSubmit(childData);
@@ -55,6 +57,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
     setGender("M");
     setPicture(null);
     setBirthday("");
+    setPoints(0); // Reset points to 0
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -148,6 +151,20 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
           type="date"
           value={birthday}
           onChange={(e) => setBirthday(e.target.value)}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="mb-1 block" htmlFor="points">
+          Points:
+        </label>
+        <input
+          required
+          className="mt-1 block w-full rounded-md border-2 border-gray-300 px-4 py-2 text-black placeholder-gray-300 shadow-sm"
+          id="points"
+          min="0"
+          type="number"
+          value={points}
+          onChange={(e) => setPoints(Number(e.target.value))}
         />
       </div>
       <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" type="submit">

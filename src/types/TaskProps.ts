@@ -3,7 +3,7 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  points: number; // Assuming you have points for each task
+  points: number; // Points for each task
   childId: string; // ID of the child to whom the task is assigned
-  status: string; // Could be 'pending', 'completed', etc.
+  status?: "pending" | "ongoing" | "confirmation" | "completed"; // Added ongoing and confirmation statuses
 }

@@ -1,31 +1,27 @@
-// src/hooks/useFetchTasks.ts
 import {useEffect, useState, useCallback} from "react";
 import {collection, getDocs, query, where} from "firebase/firestore";
 
 import {db} from "@/api/firebase";
 import {useAuth} from "@/hooks";
+import {Task} from "@/types/TaskProps";
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  points: number;
-  childId: string;
-  status: string;
-}
-
-export const useFetchTasks = () => {
+export const useFetchTasks = (childId: string) => {
+  // Accept childId as a parameter
   const {user} = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTasks = useCallback(async () => {
-    if (!user) return;
+    if (!user || !childId) return; // Ensure childId is available
 
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      const q = query(collection(db, "tasks"), where("userId", "==", user.uid));
+      const q = query(
+        collection(db, "tasks"),
+        where("userId", "==", user.uid),
+        where("childId", "==", childId),
+      ); // Fetch tasks for the specific child
       const querySnapshot = await getDocs(q);
       const tasksData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -39,7 +35,7 @@ export const useFetchTasks = () => {
       setError("Failed to load tasks");
       setLoading(false);
     }
-  }, [user]);
+  }, [user, childId]); // Add childId as a dependency
 
   useEffect(() => {
     fetchTasks();

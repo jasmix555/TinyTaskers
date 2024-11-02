@@ -1,67 +1,42 @@
 "use client";
-import {useState} from "react";
+// src/app/child-login/page.tsx
+import {useState, FormEvent} from "react";
 import {useRouter} from "next/navigation";
-import {collection, getDocs, query, where} from "firebase/firestore";
+import {signInWithEmailAndPassword} from "firebase/auth";
 
-import {db} from "@/api/firebase";
+import {auth} from "@/api/firebase";
 
-const ChildLogin = () => {
-  const [childId, setChildId] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+export default function ChildLoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleLogin = async () => {
-    setError(null); // Reset error state
-
-    if (!childId) {
-      setError("Child ID is required.");
-
-      return;
-    }
-
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
     try {
-      // Create a query to find the child with the given ID in any user's children collection
-      const q = query(collection(db, "users"), where("children", "array-contains", childId));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        setError("Child not found. Please check the ID.");
-
-        return;
-      }
-
-      // Assuming each user has only one child with that ID, get the first matching user
-      const userDoc = querySnapshot.docs[0];
-      const userId = userDoc.id; // Get the user ID
-
-      // Now you can navigate to the child dashboard
-      router.push(`/child-dashboard/${userId}/${childId}`); // Pass both userId and childId
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/child-select"); // Redirect to child selection page
     } catch (error) {
-      const e = error as Error;
-
-      setError(e.message);
+      console.error("Login failed:", error);
+      // Handle error (e.g., show an error message)
     }
   };
 
   return (
-    <div className="container mx-auto max-w-md p-6">
-      <h1 className="text-2xl font-bold">Child Login</h1>
-      {error && <p className="text-red-500">{error}</p>}
+    <form onSubmit={handleLogin}>
       <input
-        className="mt-4 rounded border p-2"
-        placeholder="Enter Child ID"
-        type="text"
-        value={childId}
-        onChange={(e) => setChildId(e.target.value)}
+        placeholder="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
-      <button
-        className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        onClick={handleLogin}
-      >
-        Login
-      </button>
-    </div>
+      <input
+        placeholder="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button type="submit">Login</button>
+    </form>
   );
-};
-
-export default ChildLogin;
+}

@@ -1,21 +1,15 @@
-// src/hooks/useUpdateTask.ts
 import {useCallback} from "react";
 import {doc, updateDoc} from "firebase/firestore";
 
 import {db} from "@/api/firebase";
-import {Task} from "@/types/Task";
+import {Task} from "@/types/TaskProps";
 
 export function useUpdateTask() {
-  const updateTask = useCallback(async (task: Task) => {
+  const updateTask = useCallback(async (taskId: string, updates: Partial<Task>) => {
     try {
-      const taskRef = doc(db, "tasks", task.id);
+      const taskRef = doc(db, "tasks", taskId);
 
-      await updateDoc(taskRef, {
-        title: task.title,
-        description: task.description,
-        points: task.points,
-        status: task.status,
-      });
+      await updateDoc(taskRef, updates);
       console.log("Task updated successfully");
     } catch (error) {
       console.error("Error updating task:", error);

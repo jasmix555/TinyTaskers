@@ -3,7 +3,7 @@ import Image from "next/image";
 import {useRouter} from "next/navigation";
 import {FaClipboard} from "react-icons/fa";
 
-import DeleteButton from "./DeleteButton";
+import DeleteButton from "../DeleteButton";
 
 import {ChildPreviewProps} from "@/types/ChildProps";
 

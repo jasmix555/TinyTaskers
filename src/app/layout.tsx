@@ -3,7 +3,7 @@ import type {Metadata} from "next";
 import {ReactNode} from "react";
 
 import "./globals.css";
-import ClientLayout from "./ClientLayout"; // Import the new ClientLayout component
+import ParentLayout from "./ParentLayout"; // Import the new ClientLayout component
 
 interface LayoutProps {
   children: ReactNode;
@@ -18,8 +18,8 @@ export default function Layout({children}: LayoutProps) {
   return (
     <html lang="en">
       <body>
-        <div className="flex min-h-screen flex-col pb-16">
-          <ClientLayout>{children}</ClientLayout>
+        <div className="flex min-h-screen flex-col">
+          <ParentLayout>{children}</ParentLayout>
         </div>
       </body>
     </html>

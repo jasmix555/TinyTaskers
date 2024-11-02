@@ -1,8 +1,9 @@
 // components/ChildrenList.tsx
 import {useEffect, useState} from "react";
 
+import ChildPreview from "./ChildPreview";
+
 import {Child} from "@/types/ChildProps";
-import ChildPreview from "@/components/ChildPreview";
 
 interface ChildrenListProps {
   registeredChildren: Child[];

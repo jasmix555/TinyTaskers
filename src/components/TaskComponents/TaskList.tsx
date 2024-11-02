@@ -1,22 +1,37 @@
-// src/components/TaskList.tsx
 import {useState, useEffect} from "react";
 
-import Loading from "./Loading";
+import Loading from "../Loading";
+
 import TaskEditForm from "./TaskEditForm";
 
-import {useFetchTasks, useFetchChildren, useAuth, useDeleteTask} from "@/hooks";
-import {Task} from "@/types/Task";
+import {useFetchTasks, useFetchChildren, useAuth, useDeleteTask, useUpdateTask} from "@/hooks"; // Ensure to import the update task hook
+import {Task} from "@/types/TaskProps";
 
 export default function TaskList() {
   const {user} = useAuth();
-  const {tasks, loading: tasksLoading, error: tasksError, refetch: refetchTasks} = useFetchTasks();
   const {
     children,
     loading: childrenLoading,
     error: childrenError,
   } = useFetchChildren(user ? user.uid : "");
-  const {deleteTask} = useDeleteTask();
 
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (children.length > 0) {
+      setSelectedChildId(children[0].id); // Set the first child as the default selected child
+    }
+  }, [children]);
+
+  const {
+    tasks,
+    loading: tasksLoading,
+    error: tasksError,
+    refetch: refetchTasks,
+  } = useFetchTasks(selectedChildId || "");
+
+  const {deleteTask} = useDeleteTask();
+  const {updateTask} = useUpdateTask(); // Import your update task hook
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -56,6 +71,15 @@ export default function TaskList() {
     setEditingTaskId(null);
   };
 
+  const handleCompleteTask = async (taskId: string) => {
+    try {
+      await updateTask(taskId, {status: "completed"}); // Update task status to completed
+      refetchTasks(); // Refetch tasks after completion
+    } catch (error) {
+      console.error("Error completing task:", error);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-md p-4">
       <h2 className="text-2xl font-bold text-gray-800">Task List</h2>
@@ -78,6 +102,14 @@ export default function TaskList() {
               </p>
 
               <div className="flex justify-between">
+                {task.status === "confirmation" && (
+                  <button
+                    className="rounded bg-green-500 p-2 text-white"
+                    onClick={() => handleCompleteTask(task.id)} // Complete task
+                  >
+                    Complete Task
+                  </button>
+                )}
                 <button
                   className="rounded bg-yellow-500 p-2 text-white"
                   onClick={() => handleEditClick(task.id)}
@@ -107,8 +139,6 @@ export default function TaskList() {
           </div>
         </div>
       )}
-
-      {/* link to go task-register */}
     </div>
   );
 }

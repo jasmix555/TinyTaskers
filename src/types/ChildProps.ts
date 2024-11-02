@@ -5,6 +5,7 @@ export interface Child {
   gender: string;
   picture: string;
   birthday: string;
+  points?: number;
 }
 
 // types/ChildProps.ts
