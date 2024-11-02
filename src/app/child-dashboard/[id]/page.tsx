@@ -11,7 +11,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
   const {user, loading: authLoading} = useAuth();
 
   // Pass the user UID to fetch children associated with that user
-  const {children, loading: fetchingChildrenLoading, error} = useFetchChildren(user?.uid || ""); // Use user UID here
+  const {children, loading: fetchingChildrenLoading, error} = useFetchChildren(user?.uid || "");
 
   const router = useRouter();
 
@@ -33,11 +33,17 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
     return <p>No child found!</p>; // Display a message if no child is found
   }
 
+  // Determine suffix based on gender
+  const suffix = child.gender === "M" ? "くん" : "ちゃん";
+
   return (
-    <div>
-      <h1>Welcome, {child.name}!</h1>
-      <p>Here is your dashboard.</p>
-      <p>Current Points: {child.points}</p> {/* Display current points */}
+    <div className="">
+      <div className="flex justify-between bg-orange-300 p-6">
+        <h2 className="text-2xl font-bold">
+          {child.name} {suffix}
+        </h2>
+        <p>Current Points: {child.points}</p>
+      </div>
       <ChildTasks childId={child.id} /> {/* Pass the child's ID to ChildTasks */}
     </div>
   );
