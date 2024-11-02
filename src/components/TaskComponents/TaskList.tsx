@@ -1,9 +1,11 @@
 import {useState, useEffect} from "react";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
 
 import Loading from "../Loading";
 
 import TaskEditForm from "./TaskEditForm";
 
+import {db} from "@/api/firebase";
 import {useFetchTasks, useFetchChildren, useAuth, useDeleteTask, useUpdateTask} from "@/hooks"; // Ensure to import the update task hook
 import {Task} from "@/types/TaskProps";
 
@@ -59,7 +61,7 @@ export default function TaskList() {
 
     if (confirmed) {
       try {
-        await deleteTask(taskId);
+        await deleteTask(taskId); // Call your delete task function
         refetchTasks(); // Refetch tasks after deletion
       } catch (error) {
         console.error("Error deleting task:", error);
@@ -72,9 +74,37 @@ export default function TaskList() {
   };
 
   const handleCompleteTask = async (taskId: string) => {
+    if (!user) {
+      console.error("User is not authenticated.");
+
+      return; // Ensure user is authenticated
+    }
+
     try {
-      await updateTask(taskId, {status: "completed"}); // Update task status to completed
-      refetchTasks(); // Refetch tasks after completion
+      // Fetch the task to get the child's ID and points for this task
+      const taskToUpdate = tasks.find((task) => task.id === taskId);
+
+      if (taskToUpdate) {
+        const childId = taskToUpdate.childId; // Get the child's ID from the task
+        const pointsToAdd = taskToUpdate.points; // Get the points associated with the task
+
+        // Update the task status to completed
+        await updateTask(taskId, {status: "completed"});
+
+        // Now fetch the child's current points
+        const childRef = doc(db, "users", user.uid, "children", childId); // Adjusted path to include user ID
+        const childSnapshot = await getDoc(childRef);
+
+        if (childSnapshot.exists()) {
+          const currentPoints = childSnapshot.data().points || 0; // Get current points or default to 0
+          const newPoints = currentPoints + pointsToAdd; // Calculate new points
+
+          // Update the child's points in Firestore
+          await updateDoc(childRef, {points: newPoints});
+        }
+
+        refetchTasks(); // Refetch tasks after completion
+      }
     } catch (error) {
       console.error("Error completing task:", error);
     }

@@ -32,6 +32,7 @@ export function useCreateChild(currentUser: string | null) {
         gender: childData.gender,
         picture: childData.picture,
         birthday: childData.birthday,
+        points: childData.points || 0, // Ensure points are set to 0 or the provided value
       };
 
       if (editingChild) {

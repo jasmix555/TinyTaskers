@@ -1,22 +1,12 @@
 // components/Navbar.tsx
-import {useEffect, useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {motion, cubicBezier} from "framer-motion";
 
-import {useAuth} from "@/hooks";
-import {useFetchChildren} from "@/hooks/useFetchChildren";
 import {NavbarProps} from "@/types/NavbarProps";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const {user} = useAuth();
-  const {children, loading} = useFetchChildren(user?.uid || "");
-  const [isParent, setIsParent] = useState(false);
-
-  useEffect(() => {
-    setIsParent(!loading && children.length > 0);
-  }, [children, loading]);
 
   const variant = {
     hidden: {opacity: 0, y: 20},
@@ -26,8 +16,6 @@ export default function Navbar() {
       transition: {duration: 0.3, ease: cubicBezier(0.4, 0, 0.2, 1)},
     },
   };
-
-  if (!isParent) return null;
 
   return (
     <div className="fixed bottom-6 left-1/2 z-10 flex w-[90%] max-w-md -translate-x-1/2 transform items-center justify-around rounded-2xl bg-gray-100 p-4 shadow-xl">
