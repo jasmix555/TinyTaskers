@@ -57,7 +57,7 @@ export default function TaskList() {
   };
 
   return (
-    <div className="mx-auto max-w-md space-y-4 p-4">
+    <div className="mx-auto max-w-md p-4">
       <h2 className="text-2xl font-bold text-gray-800">Task List</h2>
 
       {tasks.length === 0 ? (
