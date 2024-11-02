@@ -1,4 +1,5 @@
-import {FaChildren, FaGift, FaListCheck, FaGear} from "react-icons/fa6";
+// types/NavbarProps.ts
+import {FaChildren, FaStore, FaListCheck, FaGear} from "react-icons/fa6";
 
 export const NavbarProps = [
   {
@@ -7,14 +8,14 @@ export const NavbarProps = [
     path: "/",
   },
   {
-    id: "gift",
-    icon: FaGift,
+    id: "store",
+    icon: FaStore,
     path: "/rewards",
   },
   {
-    id: "list",
+    id: "tasks",
     icon: FaListCheck,
-    path: "/tasks",
+    path: "/task-index",
   },
   {
     id: "settings",

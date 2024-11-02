@@ -8,6 +8,7 @@ import ChildrenList from "@/components/ChildrenList";
 import LogoutButton from "@/components/LogoutButton";
 import {User as UserType} from "@/types/UserProps";
 import {Child} from "@/types/ChildProps";
+import Loading from "@/components/Loading";
 
 const HomePage = () => {
   const router = useRouter();
@@ -47,11 +48,7 @@ const HomePage = () => {
   };
 
   if (authLoading || childrenLoading || userLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <h1 className="text-3xl font-bold">Loading...</h1>
-      </div>
-    );
+    return <Loading />;
   }
 
   const displayUser = fetchedUser || (user ? {username: "", email: user.email} : null);

@@ -2,6 +2,7 @@
 
 import {useState, FormEvent, useEffect} from "react";
 import {signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, Auth} from "firebase/auth";
+import {FirebaseError} from "firebase/app";
 import {useRouter} from "next/navigation";
 import {AiOutlineEye, AiOutlineEyeInvisible} from "react-icons/ai";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import Image from "next/image";
 
 import {useAuth} from "@/hooks/useAuth";
 import {auth} from "@/api/firebase";
+import Loading from "@/components/Loading";
 
 export default function Login() {
   const {user, loading} = useAuth(); // Call useAuth to trigger redirect
@@ -16,6 +18,7 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false); // Loading state for Google sign-in
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +27,7 @@ export default function Login() {
     }
   }, [loading, user, router]);
 
-  if (loading) return <p>Loading...</p>; // Show loading state
+  if (loading) return <Loading />; // Show loading state
 
   // If the user is already logged in, render nothing (redirect will happen automatically)
   if (user) return null;
@@ -41,9 +44,11 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth as Auth, email, password);
       router.push("/");
-    } catch (err: unknown) {
-      console.error(err);
-      setError("パスワードが間違っています。再度お試しください。");
+    } catch (err) {
+      const error = err as FirebaseError; // Cast error to FirebaseError
+
+      console.error(error);
+      setError("パスワードが間違っています。再度お試しください。"); // You can improve this to show specific error messages based on error code if needed
     }
   };
 
@@ -51,12 +56,18 @@ export default function Login() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
 
+    setIsGoogleLoading(true); // Start loading state
+
     try {
       await signInWithPopup(auth as Auth, provider);
       router.push("/");
-    } catch (err: unknown) {
-      console.error("Google Sign-In Error: ", err);
+    } catch (err) {
+      const error = err as FirebaseError; // Cast error to FirebaseError
+
+      console.error("Google Sign-In Error: ", error);
       setError("Googleでのサインインに失敗しました。");
+    } finally {
+      setIsGoogleLoading(false); // End loading state
     }
   };
 
@@ -71,6 +82,7 @@ export default function Login() {
           <div className="relative mb-4">
             <input
               required
+              aria-label="Email Address"
               className="w-full border-0 border-b-2 border-gray-500 bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
               placeholder="メールアドレス"
               type="email"
@@ -81,6 +93,7 @@ export default function Login() {
           <div className="relative">
             <input
               required
+              aria-label="Password"
               className="w-full border-0 border-b-2 border-gray-500 bg-transparent px-3 py-2 placeholder-gray-500 transition duration-100 ease-in-out focus:border-orange-300 focus:outline-none focus:ring-0"
               placeholder="パスワード"
               type={isPasswordVisible ? "text" : "password"}
@@ -88,6 +101,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <button
+              aria-label={isPasswordVisible ? "Hide password" : "Show password"}
               className="absolute right-3 top-3 text-gray-600 hover:text-gray-800"
               type="button"
               onClick={togglePasswordVisibility}
@@ -95,7 +109,11 @@ export default function Login() {
               {isPasswordVisible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
           </div>
-          {error && <p className="text-center text-red-600">{error}</p>}
+          {error && (
+            <p aria-live="assertive" className="text-center text-red-600" role="alert">
+              {error}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-8">
@@ -122,11 +140,13 @@ export default function Login() {
 
         <div className="flex flex-col gap-6">
           <button
-            className="flex w-full items-center justify-center gap-2 rounded border border-gray-300 py-2 font-bold text-gray-700 transition duration-100 ease-in-out hover:bg-gray-100"
+            aria-label="Sign in with Google"
+            className={`flex w-full items-center justify-center gap-2 rounded border border-gray-300 py-2 font-bold text-gray-700 transition duration-100 ease-in-out ${isGoogleLoading ? "cursor-not-allowed opacity-50" : ""}`}
+            disabled={isGoogleLoading}
             onClick={handleGoogleSignIn}
           >
             <Image alt="Google" height={24} src="/google.svg" width={24} />
-            <span>Googleでサインイン</span>
+            <span>{isGoogleLoading ? "Signing in..." : "Googleでサインイン"}</span>
           </button>
         </div>
       </form>

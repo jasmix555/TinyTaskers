@@ -9,29 +9,32 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasUsername, setHasUsername] = useState(false);
-  const [hasChildInfo, setHasChildInfo] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+      try {
+        if (user) {
+          setUser(user);
+          const userDoc = await getDoc(doc(db, "users", user.uid));
 
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
 
-          setHasUsername(!!userData.username);
-          setHasChildInfo(!!userData.children && userData.children.length > 0);
+            setHasUsername(!!userData.username);
+          }
+        } else {
+          setUser(null);
         }
-      } else {
-        setUser(null);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [router]);
 
-  return {user, loading, hasUsername, hasChildInfo};
+  return {user, loading, hasUsername};
 }

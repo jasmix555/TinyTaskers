@@ -1,5 +1,4 @@
 // components/ChildrenList.tsx
-"use client";
 import {useEffect, useState} from "react";
 
 import {Child} from "@/types/ChildProps";

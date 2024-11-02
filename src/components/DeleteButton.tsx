@@ -1,5 +1,4 @@
 // components/DeleteButton.tsx
-"use client";
 import {useDeleteChild} from "@/hooks/useDeleteChild";
 
 interface DeleteButtonProps {

@@ -1,5 +1,4 @@
 // components/ChildPreview.tsx
-"use client";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
 import {FaClipboard} from "react-icons/fa";
