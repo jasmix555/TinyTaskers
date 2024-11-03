@@ -6,7 +6,7 @@ export {useFetchChildren} from "./useFetchChildren";
 
 export {useDeleteChild} from "./useDeleteChild";
 export {useCreateChild} from "./useCreateChild";
-export {useChildManagement} from "./useChildManagement";
+export {usePointManagement} from "./usePointManagement";
 
 export {useFetchTasks} from "./useFetchTasks";
 export {useUpdateTask} from "./useUpdateTask";

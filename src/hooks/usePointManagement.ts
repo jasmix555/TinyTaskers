@@ -5,7 +5,7 @@ import {doc, updateDoc} from "firebase/firestore";
 import {db} from "@/api/firebase";
 import {Child} from "@/types/ChildProps";
 
-export function useChildManagement() {
+export function usePointManagement() {
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
   const selectChild = useCallback((child: Child) => {

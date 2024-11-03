@@ -105,9 +105,9 @@ const ChildListPopup = ({
           </ul>
           <motion.button
             animate={{opacity: 1}}
-            className="mt-4 w-full rounded bg-orange-500 p-2 text-white"
+            className="mt-4 w-full rounded bg-orange-300 p-2 text-white"
             initial={{opacity: 0}}
-            transition={{delay: 0.2}}
+            transition={{delay: 0.1}}
             onClick={onRegister}
           >
             + 子供を追加
@@ -116,7 +116,7 @@ const ChildListPopup = ({
             animate={{opacity: 1}}
             className="mt-2 w-full rounded bg-gray-500 p-2 text-white"
             initial={{opacity: 0}}
-            transition={{delay: 0.3}}
+            transition={{delay: 0.2}}
             onClick={onClose}
           >
             閉じる
