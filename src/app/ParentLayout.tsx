@@ -21,7 +21,7 @@ const ParentLayout = ({children}: ClientLayoutProps) => {
     <>
       <main className={`flex-grow ${showNavbar ? "pb-16" : ""}`}>
         {children}
-        {showNavbar && <Navbar />} {/* Render Navbar conditionally */}
+        {showNavbar && <Navbar />}
       </main>
     </>
   );

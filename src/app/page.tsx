@@ -1,77 +1,81 @@
+// app/page.tsx
 "use client";
-import {useRouter} from "next/navigation";
 import {useState, useEffect} from "react";
+import {useRouter} from "next/navigation";
+import Image from "next/image";
 
-import {useAuth, useDeleteChild, useFetchUser, useFetchChildren} from "@/hooks";
-import UserGreeting from "@/components/UserGreeting";
-import ChildrenList from "@/components/ChildComponents/ChildrenList";
-import LogoutButton from "@/components/LogoutButton";
-import {User as UserType} from "@/types/UserProps";
+import {useAuth, useFetchChildren} from "@/hooks";
 import {Child} from "@/types/ChildProps";
-import Loading from "@/components/Loading";
+import {ChildListPopup, Loading} from "@/components";
 
 const HomePage = () => {
-  const router = useRouter();
   const {user, loading: authLoading} = useAuth();
-
-  const {children: initialChildren, loading: childrenLoading} = useFetchChildren(user?.uid || "");
-  const {user: fetchedUser, loading: userLoading} = useFetchUser(user?.uid || "");
-  const {deleteChild} = useDeleteChild();
-
-  // Local state to manage children data
-  const [children, setChildren] = useState<Child[]>(initialChildren);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const {children, loading: childrenLoading} = useFetchChildren(user?.uid || "");
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const [showListPopup, setShowListPopup] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    setChildren(initialChildren);
-  }, [initialChildren]);
+    const savedChildId = localStorage.getItem("selectedChildId");
 
-  const handleRegisterChildClick = () => {
+    if (children.length > 0) {
+      if (savedChildId) {
+        const savedChild = children.find((child) => child.id === savedChildId);
+
+        if (savedChild) {
+          setSelectedChild(savedChild);
+
+          return;
+        }
+      }
+      setSelectedChild(children[0]);
+    }
+  }, [children]);
+
+  const handleSelectChild = (child: Child) => {
+    setSelectedChild(child);
+    localStorage.setItem("selectedChildId", child.id);
+    setShowListPopup(false);
+  };
+
+  const handleRegisterChild = () => {
     router.push("/child-registration");
   };
 
-  const handleDeleteChild = async (childId: string) => {
-    try {
-      await deleteChild(childId);
-
-      // Update local state to remove the deleted child
-      setChildren((prevChildren) => prevChildren.filter((child) => child.id !== childId));
-      setSuccessMessage("Child deleted successfully.");
-      setDeleteError(null);
-
-      // Automatically hide the success message after 3 seconds
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch {
-      setDeleteError("Failed to delete the child. Please try again.");
-    }
-  };
-
-  if (authLoading || childrenLoading || userLoading) {
+  if (authLoading || childrenLoading) {
     return <Loading />;
   }
 
-  const displayUser = fetchedUser || (user ? {username: "", email: user.email} : null);
-
   return (
     <div className="container mx-auto max-w-md p-4">
-      <UserGreeting user={displayUser as UserType} />
-      <h2 className="mb-4 mt-8 text-xl font-bold">Registered Children</h2>
-
-      {/* Display success or error message */}
-      {successMessage && (
-        <div className="mb-4 rounded bg-green-100 p-2 text-green-800">{successMessage}</div>
+      {children.length > 0 && selectedChild && (
+        <button
+          className="flex w-full cursor-pointer items-center gap-4 rounded-lg bg-white p-4 shadow-md"
+          onClick={() => setShowListPopup(true)}
+        >
+          <div className="h-14 w-14 overflow-hidden rounded-full">
+            <Image
+              priority
+              alt={selectedChild.name}
+              className="rounded-full"
+              height={200}
+              src={selectedChild.picture || "/default-child.png"}
+              width={200}
+            />
+          </div>
+          <h2 className="text-xl font-bold">{selectedChild.name}</h2>
+          <p className="ml-auto">{selectedChild.points}pt</p>
+        </button>
       )}
-      {deleteError && <div className="mb-4 rounded bg-red-100 p-2 text-red-800">{deleteError}</div>}
-
-      <ChildrenList registeredChildren={children} onDelete={handleDeleteChild} />
-      <button
-        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        onClick={handleRegisterChildClick}
-      >
-        Register New Child
-      </button>
-      <LogoutButton />
+      {showListPopup && (
+        <ChildListPopup
+          childrenList={children}
+          selectedChildId={selectedChild?.id || ""}
+          onClose={() => setShowListPopup(false)}
+          onRegister={handleRegisterChild}
+          onSelect={handleSelectChild}
+        />
+      )}
     </div>
   );
 };
