@@ -6,7 +6,7 @@ interface TaskDetailProps {
   onClose: () => void;
 }
 
-const TaskDetail = ({task, onClose}: TaskDetailProps) => {
+export default function TaskDetail({task, onClose}: TaskDetailProps) {
   const {updateTask} = useUpdateTask();
 
   const handleCompleteTask = async () => {
@@ -31,6 +31,4 @@ const TaskDetail = ({task, onClose}: TaskDetailProps) => {
       </button>
     </div>
   );
-};
-
-export default TaskDetail;
+}

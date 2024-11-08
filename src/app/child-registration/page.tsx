@@ -10,7 +10,7 @@ import ChildrenList from "@/components/ChildComponents/ChildrenList";
 import {useDeleteChild, useFetchChildren, useAuth, useCreateChild} from "@/hooks";
 import {auth} from "@/api/firebase";
 
-const ChildRegistration = () => {
+export default function ChildRegistration() {
   const {user} = useAuth();
   const {deleteChild} = useDeleteChild();
   const router = useRouter();
@@ -85,6 +85,4 @@ const ChildRegistration = () => {
       </button>
     </div>
   );
-};
-
-export default ChildRegistration;
+}

@@ -8,7 +8,7 @@ interface ChildTasksProps {
   childId: string; // Define the prop type for child ID
 }
 
-const ChildTasks = ({childId}: ChildTasksProps) => {
+export default function ChildTasks({childId}: ChildTasksProps) {
   const {tasks, loading, error, refetch} = useFetchTasks(childId); // Fetch tasks based on the child's ID
   const {acceptTask, confirmCompletion} = useTaskManagement();
   const [localTasks, setLocalTasks] = useState<Task[]>(tasks);
@@ -91,6 +91,4 @@ const ChildTasks = ({childId}: ChildTasksProps) => {
       )}
     </div>
   );
-};
-
-export default ChildTasks;
+}

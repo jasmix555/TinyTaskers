@@ -7,7 +7,11 @@ interface DeleteButtonProps {
   onDeleteSuccess: () => void; // Callback to refresh data after successful deletion
 }
 
-const DeleteButton = ({childId, confirmMessage, onDeleteSuccess}: DeleteButtonProps) => {
+export default function DeleteButton({
+  childId,
+  confirmMessage,
+  onDeleteSuccess,
+}: DeleteButtonProps) {
   const {deleteChild} = useDeleteChild();
 
   const handleDelete = async () => {
@@ -35,6 +39,4 @@ const DeleteButton = ({childId, confirmMessage, onDeleteSuccess}: DeleteButtonPr
       Delete
     </button>
   );
-};
-
-export default DeleteButton;
+}

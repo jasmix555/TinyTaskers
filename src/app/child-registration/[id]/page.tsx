@@ -12,7 +12,7 @@ import {Child} from "@/types/ChildProps";
 import {auth, db, storage} from "@/api/firebase";
 import {Loading} from "@/components";
 
-const ChildEditPage = () => {
+export default function ChildEditPage() {
   const [child, setChild] = useState<Child | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -270,6 +270,4 @@ const ChildEditPage = () => {
       </div>
     </div>
   );
-};
-
-export default ChildEditPage;
+}

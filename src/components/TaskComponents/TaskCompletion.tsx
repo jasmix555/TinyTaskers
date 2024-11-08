@@ -3,7 +3,7 @@ interface TaskCompletionProps {
   onClose: () => void;
 }
 
-const TaskCompletion = ({points, onClose}: TaskCompletionProps) => {
+export default function TaskCompletion({points, onClose}: TaskCompletionProps) {
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-900 bg-opacity-50">
       <div className="rounded bg-white p-6 shadow-lg">
@@ -14,6 +14,4 @@ const TaskCompletion = ({points, onClose}: TaskCompletionProps) => {
       </div>
     </div>
   );
-};
-
-export default TaskCompletion;
+}

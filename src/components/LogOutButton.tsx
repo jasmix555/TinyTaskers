@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 
 import {auth} from "@/api/firebase";
 
-const LogoutButton = ({className}: {className?: string}) => {
+export default function LogoutButton({className}: {className?: string}) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -24,6 +24,4 @@ const LogoutButton = ({className}: {className?: string}) => {
       Logout
     </button>
   );
-};
-
-export default LogoutButton;
+}

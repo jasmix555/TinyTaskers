@@ -11,7 +11,7 @@ interface TaskEditFormProps {
   updateTaskList: (updatedTask: Task) => void;
 }
 
-const TaskEditForm = ({taskId, onClose, updateTaskList}: TaskEditFormProps) => {
+export default function TaskEditForm({taskId, onClose, updateTaskList}: TaskEditFormProps) {
   const {updateTask} = useUpdateTask();
   const [task, setTask] = useState<Task | null>(null);
 
@@ -118,7 +118,7 @@ const TaskEditForm = ({taskId, onClose, updateTaskList}: TaskEditFormProps) => {
       </div>
     </form>
   );
-};
+}
 
 const getTaskById = async (taskId: string): Promise<Task> => {
   const taskRef = doc(db, "tasks", taskId);
@@ -130,5 +130,3 @@ const getTaskById = async (taskId: string): Promise<Task> => {
     throw new Error("Task not found");
   }
 };
-
-export default TaskEditForm;

@@ -10,7 +10,7 @@ interface ClientLayoutProps {
   children: ReactNode;
 }
 
-const ParentLayout = ({children}: ClientLayoutProps) => {
+export default function ParentLayout({children}: ClientLayoutProps) {
   const pathname = usePathname(); // Get the current pathname
 
   // Check if the current path is in the navbarPaths
@@ -25,6 +25,4 @@ const ParentLayout = ({children}: ClientLayoutProps) => {
       </main>
     </>
   );
-};
-
-export default ParentLayout;
+}

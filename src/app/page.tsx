@@ -8,7 +8,7 @@ import {useAuth, useFetchChildren} from "@/hooks";
 import {Child} from "@/types/ChildProps";
 import {ChildListPopup, Loading} from "@/components";
 
-const HomePage = () => {
+export default function HomePage() {
   const {user, loading: authLoading} = useAuth();
   const {children, loading: childrenLoading} = useFetchChildren(user?.uid || "");
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
@@ -78,6 +78,4 @@ const HomePage = () => {
       )}
     </div>
   );
-};
-
-export default HomePage;
+}
