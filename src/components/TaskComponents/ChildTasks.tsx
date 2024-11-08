@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {FaScroll} from "react-icons/fa";
 
 import {useFetchTasks, useTaskManagement} from "@/hooks"; // Ensure all hooks are correctly imported
 import {Task} from "@/types/TaskProps"; // Adjust this import path based on your structure
@@ -42,8 +43,11 @@ const ChildTasks = ({childId}: ChildTasksProps) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Your Tasks</h2>
+    <div className="p-4">
+      <h2 className="flex items-center gap-2 font-bold sm:text-xl md:text-4xl">
+        <FaScroll />
+        挑戦できるクエスト
+      </h2>
       {localTasks.length === 0 ? (
         <p>No tasks assigned.</p>
       ) : (
