@@ -2,7 +2,7 @@
 export {default as DeleteButton} from "./DeleteButton";
 export {default as FloatingButton} from "./FloatingButton";
 export {default as Loading} from "./Loading";
-export {default as LogoutButton} from "./LogoutButton";
+export {default as Logout} from "./Logout";
 export {default as Navbar} from "./Navbar";
 export {default as SuccessMessage} from "./SuccessMessage";
 

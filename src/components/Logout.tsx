@@ -1,10 +1,10 @@
-// components/LogoutButton.tsx
+// components/Logout.tsx
 import {signOut} from "firebase/auth";
 import {useRouter} from "next/navigation";
 
 import {auth} from "@/api/firebase";
 
-export default function LogoutButton({className}: {className?: string}) {
+export default function Logout({className}: {className?: string}) {
   const router = useRouter();
 
   const handleLogout = async () => {

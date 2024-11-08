@@ -1,7 +1,7 @@
 "use client";
 
 import {useAuth, useFetchUser} from "@/hooks";
-import {UserGreeting, LogoutButton, Loading} from "@/components";
+import {UserGreeting, Logout, Loading} from "@/components";
 import {User as UserType} from "@/types/UserProps";
 
 export default function Settings() {
@@ -18,7 +18,7 @@ export default function Settings() {
   return (
     <div>
       <UserGreeting user={displayUser as UserType} />
-      <LogoutButton />
+      <Logout />
     </div>
   );
 }
