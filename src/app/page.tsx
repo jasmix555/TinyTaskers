@@ -55,6 +55,19 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto max-w-md p-4">
+      {/* if no children registered add button to register child and show no child registered */}
+      {children.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <h1 className="text-center text-2xl font-bold">No child registered</h1>
+          <button
+            className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md"
+            onClick={handleRegisterChild}
+          >
+            Register Child
+          </button>
+        </div>
+      )}
+
       {children.length > 0 && selectedChild && (
         <button
           className="flex w-full cursor-pointer items-center gap-4 rounded-lg bg-white p-4 shadow-md"
