@@ -1,3 +1,4 @@
+// app/welcome.tsx
 "use client";
 
 import Link from "next/link";
@@ -17,7 +18,7 @@ export default function Welcome() {
     }
   }, [loading, user, router]);
 
-  if (loading) return <Loading />; // Show loading state
+  if (loading) return <Loading />;
 
   // If the user is already logged in, render nothing (redirect will happen automatically)
   if (user) return null;

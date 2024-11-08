@@ -15,12 +15,12 @@ export default function HomePage() {
   const [showListPopup, setShowListPopup] = useState(false);
   const router = useRouter();
 
-  // use effect if user not logged in, redirect to welcome page
+  // Redirect to welcome page if user is not logged in
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push("/welcome");
     }
-  }, [user]);
+  }, [authLoading, user, router]);
 
   useEffect(() => {
     const savedChildId = localStorage.getItem("selectedChildId");
