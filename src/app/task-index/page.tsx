@@ -1,8 +1,7 @@
 // src/pages/tasks.tsx
 "use client";
 
-import TaskList from "@/components/TaskComponents/TaskList";
-import FloatingButton from "@/components/FloatingButton";
+import {TaskList, FloatingButton} from "@/components";
 
 export default function TasksPage() {
   return (

@@ -1,10 +1,8 @@
 "use client";
 
 import {useAuth, useFetchUser} from "@/hooks";
-import UserGreeting from "@/components/UserGreeting";
-import LogoutButton from "@/components/LogoutButton";
+import {UserGreeting, LogoutButton, Loading} from "@/components";
 import {User as UserType} from "@/types/UserProps";
-import Loading from "@/components/Loading";
 
 export default function Settings() {
   const {user, loading: authLoading} = useAuth();

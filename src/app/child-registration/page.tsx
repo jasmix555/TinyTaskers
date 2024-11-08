@@ -5,8 +5,7 @@ import {useRouter} from "next/navigation";
 import {onAuthStateChanged} from "firebase/auth";
 
 import {Child} from "@/types/ChildProps";
-import ChildForm from "@/components/ChildComponents/ChildForm";
-import ChildrenList from "@/components/ChildComponents/ChildrenList";
+import {ChildrenList, ChildForm} from "@/components";
 import {useDeleteChild, useFetchChildren, useAuth, useCreateChild} from "@/hooks";
 import {auth} from "@/api/firebase";
 

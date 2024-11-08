@@ -3,7 +3,7 @@
 import {useRouter} from "next/navigation";
 
 import {useFetchChildren, useAuth} from "@/hooks";
-import Loading from "@/components/Loading";
+import {Loading} from "@/components";
 
 export default function ChildSelectPage() {
   const router = useRouter();

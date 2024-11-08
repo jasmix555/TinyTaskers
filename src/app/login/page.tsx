@@ -10,7 +10,7 @@ import Image from "next/image";
 
 import {useAuth} from "@/hooks/useAuth";
 import {auth} from "@/api/firebase";
-import Loading from "@/components/Loading";
+import {Loading} from "@/components";
 
 export default function Login() {
   const {user, loading} = useAuth(); // Call useAuth to trigger redirect
