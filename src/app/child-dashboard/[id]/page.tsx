@@ -72,11 +72,31 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
 
         {/* Right column container */}
         <div className="col-span-2 flex h-full flex-col gap-4">
-          {/* Section 2 - Top right */}
-          <div className="h-2/3 rounded-2xl bg-gray-100 p-4">Section 2</div>
+          {/* Section 2 - Top right with background image */}
+          <div
+            className="h-2/3 rounded-2xl p-4"
+            style={{
+              backgroundImage: "url('/background_one.svg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundColor: "#B2D67A",
+            }}
+          >
+            Section 2
+          </div>
 
           {/* Section 3 - Bottom right */}
-          <div className="h-1/3 rounded-2xl bg-gray-100 p-4">Section 3</div>
+          <div
+            className="h-1/3 rounded-2xl p-4"
+            style={{
+              backgroundImage: "url('/background_two.svg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundColor: "#EE7F79",
+            }}
+          >
+            Section 3
+          </div>
         </div>
       </div>
     </div>
