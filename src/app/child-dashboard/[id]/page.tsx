@@ -2,6 +2,8 @@
 import {use} from "react";
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
+import {FaSackXmark} from "react-icons/fa6";
+import Image from "next/image";
 
 import {useAuth, useFetchChildren} from "@/hooks";
 import {ChildTasks, Loading} from "@/components";
@@ -33,22 +35,31 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
     return <p>No child found!</p>; // Display a message if no child is found
   }
 
-  // Determine suffix based on gender
-  const suffix = child.gender === "M" ? "くん" : "ちゃん";
-
-  // Determine background color based on gender
-  const backgroundColor = child.gender === "M" ? "bg-blue-500" : "bg-pink-500";
-
   return (
     <div className="">
-      <div className={`flex justify-between p-6 ${backgroundColor}`}>
-        <h2 className="font-bold sm:text-xl md:text-4xl">
-          {child.name}
-          <span className="font-normal sm:text-lg md:text-3xl">{suffix}</span>
-        </h2>
-        <p className="font-bold sm:text-xl md:text-4xl">
+      <div className={`flex justify-between bg-orange-300 p-6 text-white`}>
+        <div className="flex items-center gap-2">
+          {/* child profile picture */}
+          <div className="h-14 w-14 overflow-hidden rounded-full">
+            <Image
+              priority
+              alt={child.name}
+              className="rounded-full"
+              height={200}
+              src={child.picture || "/default-child.png"}
+              width={200}
+            />
+          </div>
+
+          <div className="rounded-xl bg-gray-600/30 px-4 py-2">
+            <h2 className="font-bold sm:text-xl md:text-4xl">{child.name}</h2>
+          </div>
+        </div>
+        <p className="flex items-center gap-2 font-bold sm:text-xl md:text-4xl">
+          <span className="font-normal sm:text-lg md:text-3xl">
+            <FaSackXmark />
+          </span>
           {child.points}
-          <span className="font-normal sm:text-lg md:text-3xl">pt</span>
         </p>
       </div>
       <ChildTasks childId={child.id} /> {/* Pass the child's ID to ChildTasks */}
