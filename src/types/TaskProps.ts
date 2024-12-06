@@ -5,5 +5,5 @@ export interface Task {
   description?: string;
   points: number; // Points for each task
   childId: string; // ID of the child to whom the task is assigned
-  status?: "pending" | "ongoing" | "confirmation" | "completed"; // Added ongoing and confirmation statuses
+  status?: "ongoing" | "confirmation" | "completed"; // Added ongoing and confirmation statuses
 }

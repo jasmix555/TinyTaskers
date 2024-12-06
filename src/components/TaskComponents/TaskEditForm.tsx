@@ -94,7 +94,6 @@ export default function TaskEditForm({taskId, onClose, updateTaskList}: TaskEdit
           value={task.status}
           onChange={(e) => setTask({...task, status: e.target.value as Task["status"]})} // Cast to Task['status']
         >
-          <option value="pending">Pending</option>
           <option value="ongoing">Ongoing</option>
           <option value="confirmation">Confirmation</option>
           <option value="completed">Completed</option>

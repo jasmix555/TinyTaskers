@@ -2,7 +2,7 @@
 import {use} from "react";
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
-import {FaSackXmark} from "react-icons/fa6";
+import {FaSackDollar} from "react-icons/fa6";
 import Image from "next/image";
 
 import {useAuth, useFetchChildren} from "@/hooks";
@@ -36,7 +36,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
   }
 
   return (
-    <div className="">
+    <div className="h-screen overflow-hidden font-mplus-rounded">
       <div className={`flex justify-between bg-orange-300 p-6 text-white`}>
         <div className="flex items-center gap-2">
           {/* child profile picture */}
@@ -51,18 +51,34 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
             />
           </div>
 
-          <div className="rounded-xl bg-gray-600/30 px-4 py-2">
+          <div className="rounded-xl bg-gray-600/25 px-4 py-2">
             <h2 className="font-bold sm:text-xl md:text-4xl">{child.name}</h2>
           </div>
         </div>
         <p className="flex items-center gap-2 font-bold sm:text-xl md:text-4xl">
           <span className="font-normal sm:text-lg md:text-3xl">
-            <FaSackXmark />
+            <FaSackDollar />
           </span>
           {child.points}
         </p>
       </div>
-      <ChildTasks childId={child.id} /> {/* Pass the child's ID to ChildTasks */}
+
+      {/* Grid Layout Container */}
+      <div className="grid h-[calc(100vh-88px)] grid-cols-5 gap-4 px-4 pb-8 pt-4">
+        {/* Section 1 - Left column (spans full height) */}
+        <div className="col-span-3 h-full rounded-2xl bg-orange-200">
+          <ChildTasks childId={child.id} />
+        </div>
+
+        {/* Right column container */}
+        <div className="col-span-2 flex h-full flex-col gap-4">
+          {/* Section 2 - Top right */}
+          <div className="h-2/3 rounded-2xl bg-gray-100 p-4">Section 2</div>
+
+          {/* Section 3 - Bottom right */}
+          <div className="h-1/3 rounded-2xl bg-gray-100 p-4">Section 3</div>
+        </div>
+      </div>
     </div>
   );
 }

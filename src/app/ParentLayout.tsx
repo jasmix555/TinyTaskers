@@ -1,3 +1,4 @@
+// ParentLayout.tsx
 "use client"; // This component will handle client-side logic
 
 import {ReactNode} from "react";

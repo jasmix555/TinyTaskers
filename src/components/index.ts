@@ -17,5 +17,4 @@ export {default as TaskEditForm} from "./TaskComponents/TaskEditForm";
 export {default as TaskList} from "./TaskComponents/TaskList";
 export {default as AddTaskForm} from "./TaskComponents/AddTaskForm";
 export {default as ChildTasks} from "./TaskComponents/ChildTasks";
-export {default as TaskCompletion} from "./TaskComponents/TaskCompletion";
 export {default as TaskDetail} from "./TaskComponents/TaskDetail";
