@@ -32,10 +32,7 @@ export default function ChildTasks({childId}: ChildTasksProps) {
       ) : (
         <ul className="space-y-4">
           {tasks.map((task) => (
-            <li
-              key={task.id}
-              className="relative overflow-hidden rounded-l-full rounded-r-2xl border bg-white"
-            >
+            <li key={task.id} className="relative overflow-hidden rounded-full border bg-white">
               <div className="flex items-center gap-4 px-4 py-2">
                 <div className="h-24 w-24 rounded-full bg-gray-300" />
                 <div className="flex flex-1 items-center justify-between p-4">
@@ -54,7 +51,7 @@ export default function ChildTasks({childId}: ChildTasksProps) {
                     ) : (
                       task.status !== "finished" && (
                         <button
-                          className="mt-2 rounded-xl bg-orange-300 px-8 py-4 text-3xl font-bold text-white shadow-lg"
+                          className="mt-2 rounded-full bg-orange-300 px-8 py-4 text-3xl font-bold text-white shadow-lg"
                           disabled={task.status === "confirmation"}
                           onClick={() => handleAskForConfirmation(task)}
                         >

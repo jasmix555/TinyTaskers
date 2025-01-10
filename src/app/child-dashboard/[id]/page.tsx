@@ -1,9 +1,8 @@
-// child-dashboard/[id]/page.tsx
 "use client";
 import {use} from "react";
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
-import {FaSackDollar} from "react-icons/fa6";
+import {FaSackDollar, FaCaretRight} from "react-icons/fa6";
 import Image from "next/image";
 
 import {useAuth, useFetchChildren} from "@/hooks";
@@ -75,7 +74,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
         <div className="col-span-2 flex h-full flex-col gap-4">
           {/* Section 2 - Top right with background image */}
           <div
-            className="h-2/3 rounded-2xl p-4"
+            className="relative h-2/3 rounded-2xl p-4"
             style={{
               backgroundImage: "url('/background_one.svg')",
               backgroundSize: "cover",
@@ -83,12 +82,20 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
               backgroundColor: "#B2D67A",
             }}
           >
-            Section 2
+            <div className="flex flex-col gap-2">
+              <h3 className="text-2xl font-bold">なにか買えるかな？</h3>
+              <h2 className="text-5xl font-bold">おみせ</h2>
+            </div>
+            {/* Button positioned at the bottom right */}
+            <button className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100">
+              おみせへはいる
+              <FaCaretRight />
+            </button>
           </div>
 
           {/* Section 3 - Bottom right */}
           <div
-            className="h-1/3 rounded-2xl p-4"
+            className="relative h-1/3 rounded-2xl p-4"
             style={{
               backgroundImage: "url('/background_two.svg')",
               backgroundSize: "cover",
@@ -96,7 +103,14 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
               backgroundColor: "#EE7F79",
             }}
           >
-            Section 3
+            <div className="flex flex-col gap-2">
+              <h2 className="text-5xl font-bold">おもいでノート</h2>
+            </div>
+            {/* New button for Section 3 positioned at the bottom right */}
+            <button className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100">
+              ノートをみる
+              <FaCaretRight />
+            </button>
           </div>
         </div>
       </div>
