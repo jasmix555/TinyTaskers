@@ -2,6 +2,7 @@
 import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
+import {FaArrowRight} from "react-icons/fa";
 
 import {useAuth, useFetchChildren} from "@/hooks";
 import {Child} from "@/types/ChildProps";
@@ -86,6 +87,17 @@ export default function HomePage() {
           <p className="ml-auto">{selectedChild.points}pt</p>
         </button>
       )}
+
+      {/* move to current children dashboard button*/}
+      <div className="mt-4">
+        <button
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2 font-bold text-white shadow-md"
+          onClick={() => router.push("/child-dashboard/" + selectedChild?.id)}
+        >
+          子供のダッシュボードへ
+          <FaArrowRight />
+        </button>
+      </div>
 
       {showListPopup && (
         <ChildListPopup

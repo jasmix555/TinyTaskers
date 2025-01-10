@@ -1,13 +1,15 @@
-// components/TaskComponents/TaskList.tsx
 import {useState, useEffect} from "react";
-import {doc, getDoc, updateDoc, collection, addDoc} from "firebase/firestore";
+import {doc, getDoc, updateDoc, collection, addDoc, Timestamp} from "firebase/firestore";
+import Image from "next/image";
+import {FaPlus} from "react-icons/fa";
 
 import Loading from "../Loading";
 
 import TaskEditForm from "./TaskEditForm";
+import TaskRegisterModal from "./TaskRegisterModal";
 
 import {db} from "@/api/firebase";
-import {useFetchTasks, useFetchChildren, useAuth, useDeleteTask, useUpdateTask} from "@/hooks"; // Ensure to import the update task hook
+import {useFetchTasks, useFetchChildren, useAuth, useDeleteTask, useUpdateTask} from "@/hooks";
 import {Task} from "@/types/TaskProps";
 
 export default function TaskList() {
@@ -17,8 +19,11 @@ export default function TaskList() {
     loading: childrenLoading,
     error: childrenError,
   } = useFetchChildren(user ? user.uid : "");
-
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+
+  const [sortOption, setSortOption] = useState("date"); // Default sort by date
+  const [sortOrder, setSortOrder] = useState("asc"); // Default sort order is ascending
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (children.length > 0) {
@@ -34,24 +39,9 @@ export default function TaskList() {
   } = useFetchTasks(selectedChildId || "");
 
   const {deleteTask} = useDeleteTask();
-  const {updateTask} = useUpdateTask(); // Import your update task hook
+  const {updateTask} = useUpdateTask();
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (editingTaskId) {
-      refetchTasks(); // Refetch tasks when editing task changes
-    }
-  }, [editingTaskId, refetchTasks]);
-
-  if (tasksLoading || childrenLoading) return <Loading />;
-  if (tasksError) return <p>{tasksError}</p>;
-  if (childrenError) return <p>{childrenError}</p>;
-
-  const getChildName = (childId: string) => {
-    const child = children.find((child) => child.id === childId);
-
-    return child ? child.name : "Unknown Child";
-  };
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const handleEditClick = (taskId: string) => {
     setEditingTaskId(taskId);
@@ -62,8 +52,8 @@ export default function TaskList() {
 
     if (confirmed) {
       try {
-        await deleteTask(taskId); // Call your delete task function
-        refetchTasks(); // Refetch tasks after deletion
+        await deleteTask(taskId);
+        refetchTasks();
       } catch (error) {
         console.error("Error deleting task:", error);
       }
@@ -78,31 +68,27 @@ export default function TaskList() {
     if (!user) {
       console.error("User is not authenticated.");
 
-      return; // Ensure user is authenticated
+      return;
     }
 
     try {
       const taskToUpdate = tasks.find((task) => task.id === taskId);
 
       if (taskToUpdate) {
-        const childId = taskToUpdate.childId; // Get the child's ID from the task
-        const pointsToAdd = taskToUpdate.points; // Get the points associated with the task
+        const childId = taskToUpdate.childId;
+        const pointsToAdd = taskToUpdate.points;
 
-        // Update the task status to completed
         await updateTask(taskId, {status: "completed"});
 
-        // Now fetch the child's current points
-        const childRef = doc(db, "users", user.uid, "children", childId); // Adjusted path to include user ID
+        const childRef = doc(db, "users", user.uid, "children", childId);
         const childSnapshot = await getDoc(childRef);
 
         if (childSnapshot.exists()) {
-          const currentPoints = childSnapshot.data().points || 0; // Get current points or default to 0
-          const newPoints = currentPoints + pointsToAdd; // Calculate new points
+          const currentPoints = childSnapshot.data().points || 0;
+          const newPoints = currentPoints + pointsToAdd;
 
-          // Update the child's points in Firestore
           await updateDoc(childRef, {points: newPoints});
 
-          // Log the task completion in the child's history
           const historyRef = collection(db, "users", user.uid, "children", childId, "history");
 
           await addDoc(historyRef, {
@@ -112,39 +98,159 @@ export default function TaskList() {
           });
         }
 
-        refetchTasks(); // Refetch tasks after completion
+        refetchTasks();
       }
     } catch (error) {
       console.error("Error completing task:", error);
     }
   };
 
+  const handleTaskAdded = () => {
+    refetchTasks();
+    setIsRegisterModalOpen(false);
+  };
+
+  const getChildName = (childId: string) => {
+    const child = children.find((child) => child.id === childId);
+
+    return child ? child.name : "Unknown Child";
+  };
+
+  const getChildPicture = (childId: string) => {
+    const child = children.find((child) => child.id === childId);
+
+    return child ? child.picture : "/default-child.png";
+  };
+
+  const handleSortOptionChange = (option: string) => {
+    if (sortOption === option) {
+      // If the same option is clicked again, toggle the order
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // Otherwise, switch to the new option and set the order to ascending
+      setSortOption(option);
+      setSortOrder("asc");
+    }
+  };
+
+  const sortTasks = (tasks: Task[]) => {
+    switch (sortOption) {
+      case "date":
+        return [...tasks].sort((a, b) => {
+          const dateA = a.dateCreated instanceof Timestamp ? a.dateCreated.toDate() : a.dateCreated;
+          const dateB = b.dateCreated instanceof Timestamp ? b.dateCreated.toDate() : b.dateCreated;
+
+          return sortOrder === "asc"
+            ? dateA.getTime() - dateB.getTime()
+            : dateB.getTime() - dateA.getTime();
+        });
+      case "points":
+        return [...tasks].sort((a, b) =>
+          sortOrder === "asc" ? a.points - b.points : b.points - a.points,
+        );
+      case "status":
+        return [...tasks].sort((a, b) => {
+          const statusA = a.status || "";
+          const statusB = b.status || "";
+
+          return sortOrder === "asc"
+            ? statusA.localeCompare(statusB)
+            : statusB.localeCompare(statusA);
+        });
+      default:
+        return tasks;
+    }
+  };
+
+  const sortedTasks = sortTasks(tasks);
+
+  if (tasksLoading || childrenLoading) return <Loading />;
+  if (tasksError) return <p>{tasksError}</p>;
+  if (childrenError) return <p>{childrenError}</p>;
+
   return (
     <div className="mx-auto max-w-md p-4">
       <h2 className="text-2xl font-bold text-gray-800">Task List</h2>
 
-      {tasks.length === 0 ? (
+      <div className="relative mb-4">
+        <button
+          className="mt-1 block w-full rounded border-2 border-gray-200 bg-white px-3 py-2 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          Sort Tasks By: {sortOption} {sortOrder === "asc" ? "↑" : "↓"}
+        </button>
+
+        {/* Custom dropdown */}
+        {isDropdownOpen && (
+          <div
+            className="absolute z-10 mt-1 w-full rounded border-2 border-gray-200 bg-white shadow-lg"
+            role="listbox"
+          >
+            <div className="p-2">
+              <button
+                aria-selected={sortOption === "Date"}
+                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                role="option"
+                onClick={() => handleSortOptionChange("date")}
+              >
+                Date {sortOption === "date" && (sortOrder === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                aria-selected={sortOption === "Points"}
+                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                role="option"
+                onClick={() => handleSortOptionChange("points")}
+              >
+                Points {sortOption === "points" && (sortOrder === "asc" ? "↑" : "↓")}
+              </button>
+              <button
+                aria-selected={sortOption === "Status"}
+                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                role="option"
+                onClick={() => handleSortOptionChange("status")}
+              >
+                Status {sortOption === "status" && (sortOrder === "asc" ? "↑" : "↓")}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {sortedTasks.length === 0 ? (
         <p>No tasks available.</p>
       ) : (
         <div className="space-y-4">
-          {tasks.map((task: Task) => (
-            <div key={task.id} className="flex flex-col gap-4 rounded-lg bg-white p-4 shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800">{task.title}</h3>
-              <p className="text-gray-700">
-                <strong>Description:</strong> {task.description || "No description provided"}
+          {sortedTasks.map((task: Task) => (
+            <div
+              key={task.id}
+              className="flex flex-col gap-2 rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md"
+            >
+              <h3 className="text-2xl font-semibold">{task.title}</h3>
+              <p className="text-lg">{task.description || "No description provided"}</p>
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 overflow-hidden rounded-full">
+                  <Image
+                    priority
+                    alt={getChildName(task.childId)}
+                    className="rounded-full"
+                    height={60}
+                    src={getChildPicture(task.childId)}
+                    width={60}
+                  />
+                </div>
+                <p className="text-2xl">{getChildName(task.childId)}</p>
+              </div>
+              <p>
+                <strong>Points:</strong> {task.points}
               </p>
-              <p className="text-gray-700">
-                <strong>Assigned to:</strong> {getChildName(task.childId)}
-              </p>
-              <p className="text-gray-700">
+              <p>
                 <strong>Status:</strong> {task.status}
               </p>
-
               <div className="flex justify-between">
                 {task.status === "confirmation" && (
                   <button
                     className="rounded bg-green-500 p-2 text-white"
-                    onClick={() => handleCompleteTask(task.id)} // Complete task
+                    onClick={() => handleCompleteTask(task.id)}
                   >
                     Complete Task
                   </button>
@@ -172,12 +278,29 @@ export default function TaskList() {
           <div className="rounded p-6 shadow-lg">
             <TaskEditForm
               taskId={editingTaskId}
-              updateTaskList={refetchTasks} // Refetch tasks on update
+              updateTaskList={refetchTasks}
               onClose={handleCloseEdit}
             />
           </div>
         </div>
       )}
+
+      {/* Floating Button for Adding Tasks */}
+      <div className="fixed bottom-32 right-6">
+        <button
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-300 text-white shadow-lg transition duration-200 hover:bg-orange-400"
+          onClick={() => setIsRegisterModalOpen(true)}
+        >
+          <FaPlus className="text-2xl" />
+        </button>
+      </div>
+
+      {/* Task Registration Modal */}
+      <TaskRegisterModal
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+        onTaskAdded={handleTaskAdded}
+      />
     </div>
   );
 }

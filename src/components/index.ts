@@ -1,6 +1,5 @@
 // src/components/index.ts
 export {default as DeleteButton} from "./DeleteButton";
-export {default as FloatingButton} from "./FloatingButton";
 export {default as Loading} from "./Loading";
 export {default as Logout} from "./Logout";
 export {default as Navbar} from "./Navbar";

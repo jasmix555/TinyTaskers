@@ -36,12 +36,8 @@ const iconOptions = [
 ];
 
 export default function RewardsPage() {
-  const {user, loading: authLoading, hasUsername} = useAuth();
-  const {
-    children,
-    loading: childrenLoading,
-    error: childrenError,
-  } = useFetchChildren(user?.uid || ""); // Pass user.uid here
+  const {user, loading: authLoading} = useAuth();
+  const {children, error: childrenError} = useFetchChildren(user?.uid || ""); // Pass user.uid here
 
   const [newReward, setNewReward] = useState<NewReward>({
     id: "", // Firestore document ID
