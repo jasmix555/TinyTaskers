@@ -1,5 +1,6 @@
+// components/TaskComponents/TaskList.tsx
 import {useState, useEffect} from "react";
-import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {doc, getDoc, updateDoc, collection, addDoc} from "firebase/firestore";
 
 import Loading from "../Loading";
 
@@ -81,7 +82,6 @@ export default function TaskList() {
     }
 
     try {
-      // Fetch the task to get the child's ID and points for this task
       const taskToUpdate = tasks.find((task) => task.id === taskId);
 
       if (taskToUpdate) {
@@ -101,6 +101,15 @@ export default function TaskList() {
 
           // Update the child's points in Firestore
           await updateDoc(childRef, {points: newPoints});
+
+          // Log the task completion in the child's history
+          const historyRef = collection(db, "users", user.uid, "children", childId, "history");
+
+          await addDoc(historyRef, {
+            title: taskToUpdate.title,
+            points: pointsToAdd,
+            dateCompleted: new Date(),
+          });
         }
 
         refetchTasks(); // Refetch tasks after completion

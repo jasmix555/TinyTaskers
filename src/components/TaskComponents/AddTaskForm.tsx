@@ -1,3 +1,4 @@
+// components/TaskComponents/AddTaskForm.tsx
 "use client";
 import {useState, FormEvent} from "react";
 import {collection, addDoc, Timestamp} from "firebase/firestore";
@@ -12,7 +13,7 @@ export default function AddTaskForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedChild, setSelectedChild] = useState("");
-  const [points, setPoints] = useState<number>(1); // Default points value set to 1
+  const [points, setPoints] = useState<number>(1); // Default points
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleAddTask = async (e: FormEvent) => {
@@ -37,7 +38,7 @@ export default function AddTaskForm() {
       setTitle("");
       setDescription("");
       setSelectedChild("");
-      setPoints(1); // Reset points to default
+      setPoints(1);
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error("Error adding task:", error);
@@ -96,7 +97,7 @@ export default function AddTaskForm() {
         <input
           required
           className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
-          pattern="^[1-9][0-9]*$" // Only allows numbers that don’t start with 0
+          pattern="^[1-9][0-9]*$"
           placeholder="Enter points for task"
           type="text"
           value={points}

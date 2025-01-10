@@ -11,4 +11,4 @@ export {usePointManagement} from "./usePointManagement";
 export {useFetchTasks} from "./useFetchTasks";
 export {useUpdateTask} from "./useUpdateTask";
 export {useDeleteTask} from "./useDeleteTask";
-export {useTaskManagement} from "./useTaskManagement";
+export * from "./useTaskManagement";

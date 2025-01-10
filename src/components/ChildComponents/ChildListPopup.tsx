@@ -1,3 +1,4 @@
+// components/ChildComponents/ChildListPopup.tsx
 import {MouseEvent, KeyboardEvent} from "react";
 import Image from "next/image";
 import {motion, AnimatePresence} from "framer-motion";
@@ -40,7 +41,7 @@ const ChildListPopup = ({
       <motion.div
         animate={{opacity: 1}}
         aria-modal="true"
-        className="fixed inset-0 z-10 mb-24 flex items-end justify-center bg-gray-900 bg-opacity-50"
+        className="fixed inset-0 z-10 flex items-end justify-center bg-gray-900 bg-opacity-50"
         exit={{opacity: 0}}
         initial={{opacity: 0}}
         role="dialog"
@@ -50,7 +51,7 @@ const ChildListPopup = ({
       >
         <motion.div
           animate={{y: 0}}
-          className="w-full max-w-md rounded-t-lg bg-white p-4 shadow-lg"
+          className="mb-20 w-full max-w-md rounded-t-lg bg-white p-4 pb-10 shadow-lg"
           exit={{y: "100%"}}
           initial={{y: "100%"}}
           role="document"

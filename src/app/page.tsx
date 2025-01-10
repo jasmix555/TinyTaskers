@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
@@ -6,7 +5,7 @@ import Image from "next/image";
 
 import {useAuth, useFetchChildren} from "@/hooks";
 import {Child} from "@/types/ChildProps";
-import {ChildListPopup, Loading} from "@/components";
+import {ChildListPopup, Loading, ChildHistory} from "@/components";
 
 export default function HomePage() {
   const {user, loading: authLoading} = useAuth();
@@ -87,6 +86,7 @@ export default function HomePage() {
           <p className="ml-auto">{selectedChild.points}pt</p>
         </button>
       )}
+
       {showListPopup && (
         <ChildListPopup
           childrenList={children}
@@ -96,6 +96,9 @@ export default function HomePage() {
           onSelect={handleSelectChild}
         />
       )}
+
+      {/* Display ChildHistory below the child selection */}
+      {selectedChild && user && <ChildHistory childId={selectedChild.id} userId={user.uid} />}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+// child-dashboard/[id]/page.tsx
 "use client";
 import {use} from "react";
 import {useRouter} from "next/navigation";
