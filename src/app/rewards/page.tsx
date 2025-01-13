@@ -283,16 +283,16 @@ export default function RewardsPage() {
           {rewards.map((reward) => (
             <li
               key={reward.id}
-              className="mb-4 flex items-center justify-between rounded-lg border border-gray-200 p-4"
+              className="mb-4 flex items-center justify-between rounded-lg border-l border-r border-t border-gray-200 p-4 shadow-md"
             >
-              <div>
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    {iconOptions.find((icon) => icon.id === reward.icon)?.icon}
-                  </div>
-                  <p className="font-bold">{reward.title}</p>
+              <div className="flex items-center gap-2 p-2">
+                <div className="mr-2 rounded-lg border border-gray-300 bg-white p-4 text-2xl">
+                  {iconOptions.find((icon) => icon.id === reward.icon)?.icon}
                 </div>
-                <p className="text-gray-600">{reward.pointsRequired} points</p>
+                <div className="">
+                  <p className="font-bold">{reward.title}</p>
+                  <p className="text-gray-600">{reward.pointsRequired} points</p>
+                </div>
               </div>
               {/* Edit Button */}
               <button

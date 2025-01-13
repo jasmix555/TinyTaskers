@@ -170,50 +170,52 @@ export default function TaskList() {
 
   return (
     <div className="mx-auto max-w-md p-4">
-      <h2 className="text-center text-2xl font-bold text-gray-800">Task List</h2>
+      <div className="relative" style={{minHeight: "7rem"}}>
+        <div className="fixed left-0 right-0 top-0 z-10 flex flex-col gap-1 bg-white p-4 shadow-md">
+          <h2 className="text-center text-2xl font-bold text-gray-800">Task List</h2>
 
-      <div className="relative mb-4">
-        <button
-          className="mt-1 block w-full rounded border-2 border-gray-200 bg-white px-3 py-2 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          Sort Tasks By: {sortOption} {sortOrder === "asc" ? "↑" : "↓"}
-        </button>
-
-        {/* Custom dropdown */}
-        {isDropdownOpen && (
-          <div
-            className="absolute z-10 mt-1 w-full rounded border-2 border-gray-200 bg-white shadow-lg"
-            role="listbox"
+          <button
+            className="mt-1 block w-full rounded border border-gray-200 bg-white px-3 py-2 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <div className="p-2">
-              <button
-                aria-selected={sortOption === "Date"}
-                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
-                role="option"
-                onClick={() => handleSortOptionChange("date")}
-              >
-                Date {sortOption === "date" && (sortOrder === "asc" ? "↑" : "↓")}
-              </button>
-              <button
-                aria-selected={sortOption === "Points"}
-                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
-                role="option"
-                onClick={() => handleSortOptionChange("points")}
-              >
-                Points {sortOption === "points" && (sortOrder === "asc" ? "↑" : "↓")}
-              </button>
-              <button
-                aria-selected={sortOption === "Status"}
-                className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
-                role="option"
-                onClick={() => handleSortOptionChange("status")}
-              >
-                Status {sortOption === "status" && (sortOrder === "asc" ? "↑" : "↓")}
-              </button>
+            Sort Tasks By: {sortOption} {sortOrder === "asc" ? "↑" : "↓"}
+          </button>
+
+          {/* Custom dropdown */}
+          {isDropdownOpen && (
+            <div
+              className="absolute z-10 mt-1 w-full rounded border-2 border-gray-200 bg-white shadow-lg"
+              role="listbox"
+            >
+              <div className="p-2">
+                <button
+                  aria-selected={sortOption === "Date"}
+                  className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                  role="option"
+                  onClick={() => handleSortOptionChange("date")}
+                >
+                  Date {sortOption === "date" && (sortOrder === "asc" ? "↑" : "↓")}
+                </button>
+                <button
+                  aria-selected={sortOption === "Points"}
+                  className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                  role="option"
+                  onClick={() => handleSortOptionChange("points")}
+                >
+                  Points {sortOption === "points" && (sortOrder === "asc" ? "↑" : "↓")}
+                </button>
+                <button
+                  aria-selected={sortOption === "Status"}
+                  className="w-full cursor-pointer p-2 text-left hover:bg-orange-100"
+                  role="option"
+                  onClick={() => handleSortOptionChange("status")}
+                >
+                  Status {sortOption === "status" && (sortOrder === "asc" ? "↑" : "↓")}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {sortedTasks.length === 0 ? (
@@ -223,7 +225,7 @@ export default function TaskList() {
           {sortedTasks.map((task: Task) => (
             <div
               key={task.id}
-              className="flex flex-col gap-2 rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md"
+              className="flex flex-col gap-2 rounded-lg border-l border-r border-t border-gray-200 bg-white p-4 shadow-md"
             >
               <h3 className="text-2xl font-semibold">{task.title}</h3>
               <p className="text-lg">{task.description || "No description provided"}</p>
