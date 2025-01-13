@@ -159,7 +159,7 @@ export default function RewardsPage() {
 
   return (
     <div className="container mx-auto max-w-md p-4">
-      <h1 className="mb-4 text-center text-xl font-bold text-gray-900">ストア</h1>
+      <h1 className="mb-4 text-center text-2xl font-bold text-gray-900">ストア</h1>
 
       <div className="mb-4">
         <button

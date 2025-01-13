@@ -170,7 +170,7 @@ export default function TaskList() {
 
   return (
     <div className="mx-auto max-w-md p-4">
-      <h2 className="text-2xl font-bold text-gray-800">Task List</h2>
+      <h2 className="text-center text-2xl font-bold text-gray-800">Task List</h2>
 
       <div className="relative mb-4">
         <button

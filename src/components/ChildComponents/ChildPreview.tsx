@@ -22,7 +22,7 @@ const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
   };
 
   return (
-    <div className="rounded border border-gray-300 p-4">
+    <div className="rounded border-l-2 border-r-2 border-t-2 border-gray-200 p-4">
       <div className="flex gap-4">
         <div className="mb-4 h-28 w-28 overflow-hidden rounded-full">
           <Image

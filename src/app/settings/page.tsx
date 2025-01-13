@@ -16,7 +16,7 @@ export default function Settings() {
   }
 
   return (
-    <div>
+    <div className="container mx-auto max-w-md">
       <UserGreeting user={displayUser as UserType} />
       <Logout />
     </div>
