@@ -1,5 +1,18 @@
-// types/TaskProps.ts
+// types/TaskProps.tsx
 import {Timestamp} from "firebase/firestore";
+import {
+  FaGift,
+  FaGamepad,
+  FaStar,
+  FaAppStore,
+  FaTrophy,
+  FaMedal,
+  FaShoppingCart,
+  FaGlobe,
+  FaPlane,
+  FaLaptop,
+  FaFutbol,
+} from "react-icons/fa";
 
 export interface Task {
   id: string;
@@ -10,3 +23,18 @@ export interface Task {
   dateCreated: Date | Timestamp; // Firestore Timestamp or JS Date
   status?: "finished" | "confirmation" | "completed";
 }
+
+// TaskIcons array with JSX
+export const TaskIcons = [
+  {id: "gift", icon: FaGift},
+  {id: "appStore", icon: FaAppStore},
+  {id: "gamepad", icon: FaGamepad},
+  {id: "star", icon: FaStar},
+  {id: "trophy", icon: FaTrophy},
+  {id: "medal", icon: FaMedal},
+  {id: "shoppingCart", icon: FaShoppingCart},
+  {id: "globe", icon: FaGlobe},
+  {id: "plane", icon: FaPlane},
+  {id: "laptop", icon: FaLaptop},
+  {id: "futbol", icon: FaFutbol},
+];
