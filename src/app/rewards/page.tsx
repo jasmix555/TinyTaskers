@@ -2,25 +2,25 @@
 
 import React, {useState, useEffect} from "react";
 import {collection, addDoc, getDocs, updateDoc, deleteDoc, doc} from "firebase/firestore";
-import {FaGift} from "react-icons/fa";
+import {FaGift, FaPlus} from "react-icons/fa";
+import {FaSackDollar} from "react-icons/fa6";
 
 import {db} from "@/api/firebase";
 import {useAuth, useFetchChildren} from "@/hooks";
 import {TaskIcons} from "@/types/TaskProps"; // Import TaskIcons
+import {Loading} from "@/components";
 
-// Define the interface for a Reward item
 interface Reward {
-  id: string; // Firestore document ID
-  title: string; // Name of the reward
-  pointsRequired: number; // Points required to redeem the reward
-  dateAdded: Date; // Date the reward was added
-  icon: string; // Icon for the reward
-  availableFor: string[]; // List of children ids the reward is available for
+  id: string;
+  title: string;
+  pointsRequired: number;
+  dateAdded: Date;
+  icon: string;
+  availableFor: string[];
 }
 
-// Define the state type for the new reward being added
 interface NewReward {
-  id: string; // Firestore document ID
+  id: string;
   title: string;
   pointsRequired: number;
   icon: string;
@@ -45,16 +45,14 @@ export default function RewardsPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
-  // Handle new reward form submission
   const handleAddReward = async () => {
     if (
       !newReward.title.trim() ||
       newReward.pointsRequired <= 0 ||
-      isNaN(newReward.pointsRequired) ||
       !newReward.icon ||
       newReward.availableFor.length === 0
     ) {
-      setError("Please provide all details for the reward.");
+      setError("すべての項目を正しく入力してください。");
 
       return;
     }
@@ -72,12 +70,32 @@ export default function RewardsPage() {
           icon: newReward.icon,
           availableFor: newReward.availableFor,
         });
+
+        setRewards((prevRewards) =>
+          prevRewards.map((reward) =>
+            reward.id === newReward.id ? {...reward, ...newReward} : reward,
+          ),
+        );
         setIsEditMode(false);
       } else {
-        await addDoc(rewardsRef, {
-          ...newReward,
+        const rewardDocRef = await addDoc(rewardsRef, {
+          title: newReward.title,
+          pointsRequired: newReward.pointsRequired,
+          icon: newReward.icon,
+          availableFor: newReward.availableFor,
           dateAdded: new Date(),
         });
+
+        const newRewardWithId = {
+          id: rewardDocRef.id,
+          title: newReward.title,
+          pointsRequired: newReward.pointsRequired,
+          icon: newReward.icon,
+          availableFor: newReward.availableFor,
+          dateAdded: new Date(),
+        };
+
+        setRewards((prevRewards) => [...prevRewards, newRewardWithId]);
       }
 
       setNewReward({
@@ -88,33 +106,28 @@ export default function RewardsPage() {
         availableFor: [],
       });
       setError(null);
-      fetchRewards();
       setIsModalOpen(false);
     } catch (err) {
-      setError("Failed to add or update reward.");
+      setError("追加または更新に失敗しました。");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch rewards from Firestore
   const fetchRewards = async () => {
     try {
       const rewardsRef = collection(db, "rewards");
       const rewardsSnapshot = await getDocs(rewardsRef);
-      const rewardsList: Reward[] = rewardsSnapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<Reward, "id">;
-
-        return {
-          id: doc.id,
-          ...data,
-        };
-      });
+      const rewardsList: Reward[] = rewardsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        dateAdded: doc.data().dateAdded.toDate(),
+      })) as Reward[];
 
       setRewards(rewardsList);
     } catch (err) {
-      setError("Failed to load rewards.");
+      setError("報酬の読み込みに失敗しました。");
       console.error(err);
     }
   };
@@ -123,7 +136,6 @@ export default function RewardsPage() {
     fetchRewards();
   }, []);
 
-  // Handle the edit reward button
   const handleEditReward = (id: string) => {
     const rewardToEdit = rewards.find((reward) => reward.id === id);
 
@@ -140,16 +152,22 @@ export default function RewardsPage() {
     }
   };
 
-  // Handle reward deletion
   const handleDeleteReward = async (id: string) => {
+    if (!id) {
+      console.error("無効な報酬IDです。");
+      setError("報酬IDが見つかりません。");
+
+      return;
+    }
+
     setLoading(true);
     try {
       const rewardDoc = doc(db, "rewards", id);
 
       await deleteDoc(rewardDoc);
-      fetchRewards();
+      setRewards((prevRewards) => prevRewards.filter((reward) => reward.id !== id));
     } catch (err) {
-      setError("Failed to delete the reward.");
+      setError("報酬の削除に失敗しました。");
       console.error(err);
     } finally {
       setLoading(false);
@@ -157,12 +175,12 @@ export default function RewardsPage() {
   };
 
   if (authLoading || !user) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   return (
     <div className="container mx-auto max-w-md p-4">
-      <h1 className="mb-4 text-center text-2xl font-bold text-gray-900">Rewards Store</h1>
+      <h1 className="mb-4 text-center text-2xl font-bold text-gray-900">ストア</h1>
       <div className="mb-4">
         <button
           className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-300 px-4 py-2 text-2xl font-bold text-white shadow-md hover:bg-orange-400"
@@ -171,26 +189,29 @@ export default function RewardsPage() {
             setIsModalOpen(true);
           }}
         >
-          Add Reward
+          <span>
+            <FaPlus />
+          </span>
+          欲しいものを追加する
         </button>
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="w-96 rounded-lg bg-white p-6">
             <h2 className="mb-4 text-xl font-bold">
-              {isEditMode ? "Edit Reward" : "Add New Reward"}
+              {isEditMode ? "報酬を編集する" : "新しい報酬を追加する"}
             </h2>
             <div className="mb-4">
               <input
                 className="mb-2 w-full rounded-lg border border-gray-300 p-2"
-                placeholder="Reward Title"
+                placeholder="報酬のタイトル"
                 type="text"
                 value={newReward.title}
                 onChange={(e) => setNewReward({...newReward, title: e.target.value})}
               />
               <input
                 className="w-full rounded-lg border border-gray-300 p-2"
-                placeholder="Points Required"
+                placeholder="必要なポイント"
                 type="number"
                 value={newReward.pointsRequired}
                 onChange={(e) =>
@@ -200,7 +221,7 @@ export default function RewardsPage() {
             </div>
             <div className="mb-4">
               <label className="mb-2 block">
-                Select Icon
+                アイコンを選択する
                 <div className="grid max-h-52 grid-cols-3 gap-2 overflow-auto rounded-lg border border-gray-300 p-2">
                   {TaskIcons.map((icon) => (
                     <button
@@ -222,7 +243,7 @@ export default function RewardsPage() {
             </div>
             <div className="mb-4">
               <label className="mb-2 block">
-                Select Children
+                子どもを選択する
                 <select
                   multiple
                   className="w-full rounded-lg border border-gray-300 p-2"
@@ -247,13 +268,13 @@ export default function RewardsPage() {
                 className="rounded-lg bg-gray-300 px-4 py-2 text-black"
                 onClick={() => setIsModalOpen(false)}
               >
-                Cancel
+                キャンセル
               </button>
               <button
                 className="rounded-lg bg-orange-300 px-4 py-2 text-white"
                 onClick={handleAddReward}
               >
-                {isEditMode ? "Save Changes" : "Add Reward"}
+                {isEditMode ? "変更を保存する" : "報酬を追加する"}
               </button>
             </div>
           </div>
@@ -262,28 +283,31 @@ export default function RewardsPage() {
       {error && <p className="text-red-500">{error}</p>}
       {childrenError && <p className="text-red-500">{childrenError}</p>}
       {loading ? (
-        <p>Loading rewards...</p>
+        <p>報酬を読み込み中...</p>
       ) : rewards.length === 0 ? (
-        <p>No rewards registered.</p>
+        <p className="text-center">登録された報酬がありません。</p>
       ) : (
         <ul>
-          {rewards.map((reward) => {
-            // Find the corresponding icon for the reward
+          {rewards.map((reward, idx) => {
             const Icon = TaskIcons.find((icon) => icon.id === reward.icon)?.icon || FaGift;
 
             return (
               <li
-                key={reward.id}
+                key={`${reward.id}-${idx}`}
                 className="mb-4 flex items-center justify-between rounded-lg border-l border-r border-t border-gray-200 p-4 shadow-md"
               >
                 <div className="flex items-center gap-2">
-                  <div className="rounded-lg border border-gray-200 p-4 text-3xl">
-                    <Icon /> {/* Render the icon */}
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-3xl">
+                    <Icon />
                   </div>
                   <div className="flex-1">
-                    <p className="max-w-xs truncate font-bold">{reward.title}</p>{" "}
-                    {/* Title with ellipsis */}
-                    <p className="text-gray-600">{reward.pointsRequired} points</p>
+                    <p className="w-36 truncate font-bold">{reward.title}</p>
+                    <p className="flex gap-1 text-gray-600">
+                      <span>
+                        <FaSackDollar className="text-md inline-block" />
+                      </span>
+                      <span className="text-lg">{reward.pointsRequired}</span>
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -291,13 +315,13 @@ export default function RewardsPage() {
                     className="rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400"
                     onClick={() => handleEditReward(reward.id)}
                   >
-                    Edit
+                    編集
                   </button>
                   <button
                     className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
                     onClick={() => handleDeleteReward(reward.id)}
                   >
-                    Delete
+                    削除
                   </button>
                 </div>
               </li>

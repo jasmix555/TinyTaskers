@@ -13,6 +13,7 @@ import {
   FaLaptop,
   FaFutbol,
 } from "react-icons/fa";
+import {TbPokeball} from "react-icons/tb";
 
 export interface Task {
   id: string;
@@ -29,6 +30,7 @@ export const TaskIcons = [
   {id: "gift", icon: FaGift},
   {id: "appStore", icon: FaAppStore},
   {id: "gamepad", icon: FaGamepad},
+  {id: "pokeball", icon: TbPokeball},
   {id: "star", icon: FaStar},
   {id: "trophy", icon: FaTrophy},
   {id: "medal", icon: FaMedal},
