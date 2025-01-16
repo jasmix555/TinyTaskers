@@ -46,7 +46,7 @@ export default function ChildTasks({childId}: ChildTasksProps) {
                 </div>
                 <div className="flex w-full flex-1 items-center justify-between py-2">
                   <div className="flex flex-col gap-3 text-lg sm:text-lg md:text-3xl">
-                    <h3 className="max-w-48 truncate font-bold">{task.title}</h3>
+                    <h3 className="max-w-48 truncate font-bold md:max-w-96">{task.title}</h3>
                     <p className="flex items-center text-xs md:gap-2 md:text-xl">
                       クエスト完了すると +<FaSackDollar />
                       {task.points}

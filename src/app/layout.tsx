@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function Layout({children}: LayoutProps) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body>
         <div className="flex min-h-screen flex-col">
           <ParentLayout>{children}</ParentLayout>

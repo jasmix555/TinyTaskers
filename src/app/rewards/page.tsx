@@ -204,7 +204,7 @@ export default function RewardsPage() {
             <div className="mb-4">
               <input
                 className="mb-2 w-full rounded-lg border border-gray-300 p-2"
-                placeholder="報酬のタイトル"
+                placeholder="商品名を入力。。。"
                 type="text"
                 value={newReward.title}
                 onChange={(e) => setNewReward({...newReward, title: e.target.value})}
@@ -219,50 +219,46 @@ export default function RewardsPage() {
                 }
               />
             </div>
-            <div className="mb-4">
-              <label className="mb-2 block">
-                アイコンを選択する
-                <div className="grid max-h-52 grid-cols-3 gap-2 overflow-auto rounded-lg border border-gray-300 p-2">
-                  {TaskIcons.map((icon) => (
-                    <button
-                      key={icon.id}
-                      aria-pressed={newReward.icon === icon.id}
-                      className={`flex items-center justify-center rounded-md border ${
-                        newReward.icon === icon.id
-                          ? "border-blue-500 bg-blue-100"
-                          : "border-transparent hover:bg-gray-100"
-                      }`}
-                      type="button"
-                      onClick={() => setNewReward({...newReward, icon: icon.id})}
-                    >
-                      <div className="p-4 text-2xl">{React.createElement(icon.icon)}</div>
-                    </button>
-                  ))}
-                </div>
-              </label>
-            </div>
-            <div className="mb-4">
-              <label className="mb-2 block">
-                子どもを選択する
-                <select
-                  multiple
-                  className="w-full rounded-lg border border-gray-300 p-2"
-                  value={newReward.availableFor}
-                  onChange={(e) =>
-                    setNewReward({
-                      ...newReward,
-                      availableFor: Array.from(e.target.selectedOptions, (option) => option.value),
-                    })
-                  }
-                >
-                  {children.map((child) => (
-                    <option key={child.id} className="p-2" value={child.id}>
-                      {child.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
+            <label className="mb-2 block">
+              アイコンを選択する
+              <div className="grid max-h-52 grid-cols-3 gap-2 overflow-auto rounded-lg border border-gray-300 p-2">
+                {TaskIcons.map((icon) => (
+                  <button
+                    key={icon.id}
+                    aria-pressed={newReward.icon === icon.id}
+                    className={`flex items-center justify-center rounded-md border ${
+                      newReward.icon === icon.id
+                        ? "border-blue-500 bg-blue-100"
+                        : "border-transparent hover:bg-gray-100"
+                    }`}
+                    type="button"
+                    onClick={() => setNewReward({...newReward, icon: icon.id})}
+                  >
+                    <div className="p-4 text-2xl">{React.createElement(icon.icon)}</div>
+                  </button>
+                ))}
+              </div>
+            </label>
+            <label className="mb-2 block">
+              子どもを選択する
+              <select
+                multiple
+                className="w-full rounded-lg border border-gray-300 p-2"
+                value={newReward.availableFor}
+                onChange={(e) =>
+                  setNewReward({
+                    ...newReward,
+                    availableFor: Array.from(e.target.selectedOptions, (option) => option.value),
+                  })
+                }
+              >
+                {children.map((child) => (
+                  <option key={child.id} className="p-2" value={child.id}>
+                    {child.name}
+                  </option>
+                ))}
+              </select>
+            </label>
             <div className="flex justify-between">
               <button
                 className="rounded-lg bg-gray-300 px-4 py-2 text-black"

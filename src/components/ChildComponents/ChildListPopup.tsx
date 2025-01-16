@@ -51,7 +51,7 @@ const ChildListPopup = ({
       >
         <motion.div
           animate={{y: 0}}
-          className="mb-20 w-full max-w-md rounded-t-lg bg-white p-4 pb-10 shadow-lg"
+          className="w-full max-w-md rounded-t-lg bg-white p-4 pb-28 shadow-lg"
           exit={{y: "100%"}}
           initial={{y: "100%"}}
           role="document"
@@ -95,7 +95,7 @@ const ChildListPopup = ({
                     <div>
                       <span className="font-semibold">{child.name}</span>
                       {child.id === selectedChildId && (
-                        <span className="ml-2 text-sm text-blue-500">Currently Selected</span>
+                        <span className="ml-2 text-sm text-blue-500">現在選択中</span>
                       )}
                     </div>
                   </div>

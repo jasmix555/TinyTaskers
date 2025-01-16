@@ -111,7 +111,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
         <div className="col-span-2 flex h-full flex-col gap-4">
           {/* Sections for store and memory */}
           <div
-            className="relative h-2/3 rounded-2xl p-4"
+            className="relative h-4/5 rounded-2xl p-4"
             style={{
               backgroundImage: "url('/background_one.svg')",
               backgroundSize: "cover",
@@ -120,8 +120,8 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
             }}
           >
             <div className="flex flex-col gap-2">
-              <h3 className="text-2xl font-bold">なにか買えるかな？</h3>
-              <h2 className="text-5xl font-bold">おみせ</h2>
+              <h3 className="font-bold md:text-2xl">なにか買えるかな？</h3>
+              <h2 className="font-bold md:text-5xl">おみせ</h2>
             </div>
             <Link
               className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100"
@@ -141,9 +141,9 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
             }}
           >
             <div className="flex flex-col gap-2">
-              <h2 className="text-5xl font-bold">おもいでノート</h2>
+              <h2 className="font-bold md:text-5xl">おもいでノート</h2>
             </div>
-            <button className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100">
+            <button className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-black hover:bg-gray-100 md:text-2xl">
               ノートをみる <FaCaretRight />
             </button>
           </div>

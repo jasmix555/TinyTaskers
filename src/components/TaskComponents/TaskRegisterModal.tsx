@@ -23,7 +23,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
     e.preventDefault();
 
     if (!title || !selectedChild || !points || Number(points) <= 0) {
-      alert("Please fill in all required fields.");
+      alert("すべての必須項目を記入してください。");
 
       return;
     }
@@ -39,7 +39,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
         dateCreated: Timestamp.now(),
       });
 
-      setSuccessMessage("Task added successfully!");
+      setSuccessMessage("タスクが正常に追加されました！");
       setTitle("");
       setDescription("");
       setSelectedChild("");
@@ -48,7 +48,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
       onTaskAdded(); // Notify parent about the new task
       onClose(); // Close the modal
     } catch (error) {
-      console.error("Error adding task:", error);
+      console.error("タスク追加エラー:", error);
     }
   };
 
@@ -56,15 +56,17 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-xl font-bold text-gray-800">Create a New Task</h2>
+      <div className="m-4 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <h2 className="mb-4 border-b pb-2 text-center text-xl font-bold text-gray-800">
+          新しいタスクを作成
+        </h2>
         <form className="space-y-4" onSubmit={handleAddTask}>
           <label className="block text-sm font-medium text-gray-700">
-            Task Title
+            タスクタイトル
             <input
               required
               className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
-              placeholder="Enter task title"
+              placeholder="タスクタイトルを入力してください"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -72,24 +74,24 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
           </label>
 
           <label className="block text-sm font-medium text-gray-700">
-            Task Description
+            タスクの説明
             <textarea
               className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
-              placeholder="Enter task description (optional)"
+              placeholder="タスクの説明を入力してください（任意）"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </label>
 
           <label className="block text-sm font-medium text-gray-700">
-            Assign to Child
+            子どもを選択
             <select
               required
               className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
               value={selectedChild}
               onChange={(e) => setSelectedChild(e.target.value)}
             >
-              <option value="">Select Child</option>
+              <option value="">子どもを選択してください</option>
               {!loading &&
                 children.map((child) => (
                   <option key={child.id} value={child.id}>
@@ -100,11 +102,11 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
           </label>
 
           <label className="block text-sm font-medium text-gray-700">
-            Task Points
+            タスクのポイント
             <input
               required
               className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
-              placeholder="Enter points for task"
+              placeholder="タスクのポイントを入力してください"
               type="number"
               value={points}
               onChange={(e) => {
@@ -115,15 +117,15 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
             />
           </label>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-between gap-2">
             <button className="rounded bg-gray-300 px-4 py-2" type="button" onClick={onClose}>
-              Cancel
+              キャンセル
             </button>
             <button
               className="rounded bg-orange-300 px-4 py-2 text-white shadow-sm hover:bg-orange-400"
               type="submit"
             >
-              Add Task
+              タスクを追加
             </button>
           </div>
         </form>

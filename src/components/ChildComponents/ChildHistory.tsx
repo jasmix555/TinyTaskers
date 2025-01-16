@@ -38,7 +38,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
           // Ensure the data includes title, points, action, and handle any missing fields
           return {
             id: doc.id,
-            title: data.title || "Unknown Task", // Default to a fallback title
+            title: data.title || "不明なタスク", // Default to a fallback title
             points: data.points || 0, // Default to 0 points if missing
             action: data.action || "add", // Default action to "add"
             dateCompleted,
@@ -47,7 +47,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
 
         setHistory(historyList);
       } catch (err) {
-        setError("Failed to load history.");
+        setError("履歴の読み込みに失敗しました。");
         console.error(err); // Log the error to help with debugging
       } finally {
         setLoading(false);
@@ -63,35 +63,40 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div
-      className="no-scrollbar mt-4 overflow-y-scroll rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md"
-      style={{
-        maxHeight: "calc(100vh - 18rem)",
-      }}
-    >
-      <h3 className="mb-2 border-b-2 border-gray-200 pb-2 text-xl font-semibold">
-        Activity History
-      </h3>
-      {history.length === 0 ? (
-        <p>No activity history found for this child.</p>
-      ) : (
-        <ul className="mt-2 space-y-2">
-          {history.map((entry, index) => (
-            <li key={entry.id} className="flex w-full items-center justify-between">
-              <div className="flex-1">
-                <p className="text-lg font-bold">{entry.title}</p>
-                <p className="text-md text-gray-400">{entry.dateCompleted.toLocaleDateString()}</p>
-              </div>
-              <p className="text-xl font-bold">
-                {entry.action === "add" ? "+" : "-"}
-                {entry.points}pt
-              </p>
+    <div className="z-0 mt-2 rounded-lg border border-gray-200 bg-white shadow-md">
+      {/* 固定ヘッダー */}
+      <div className="sticky top-0 rounded-t-lg border-b border-gray-200 bg-white px-4 py-2">
+        <h3 className="text-xl font-semibold">直近の入出ポイント</h3>
+      </div>
 
-              {index < history.length - 1 && <div className="my-2 border-t border-gray-300" />}
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* スクロール可能なコンテンツ */}
+      <div
+        className="no-scrollbar overflow-y-auto p-4"
+        style={{
+          maxHeight: "calc(100vh - 20rem)",
+        }}
+      >
+        {history.length === 0 ? (
+          <p>この子供の活動履歴は見つかりませんでした。</p>
+        ) : (
+          <ul className="space-y-2">
+            {history.map((entry) => (
+              <li key={entry.id} className="flex w-full items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-lg font-bold">{entry.title}</p>
+                  <p className="text-md text-gray-400">
+                    {entry.dateCompleted.toLocaleDateString()}
+                  </p>
+                </div>
+                <p className="text-xl font-bold">
+                  {entry.action === "add" ? "+" : "-"}
+                  {entry.points}pt
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
