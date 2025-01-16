@@ -63,7 +63,12 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="mt-4 rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md">
+    <div
+      className="no-scrollbar mt-4 overflow-y-scroll rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md"
+      style={{
+        maxHeight: "calc(100vh - 18rem)",
+      }}
+    >
       <h3 className="mb-2 border-b-2 border-gray-200 pb-2 text-xl font-semibold">
         Activity History
       </h3>
