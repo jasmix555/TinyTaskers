@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import {collection, getDocs, query, orderBy} from "firebase/firestore";
 
+import Loading from "../Loading";
+
 import {db} from "@/api/firebase";
 
 // Define the type for history entries
@@ -57,7 +59,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
     }
   }, [childId, userId]);
 
-  if (loading) return <p>Loading history...</p>;
+  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (

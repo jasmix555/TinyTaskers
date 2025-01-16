@@ -1,3 +1,4 @@
+// hooks/usePointManagement.ts
 import {useState, useCallback} from "react";
 import {doc, updateDoc, collection, addDoc} from "firebase/firestore";
 
@@ -7,15 +8,19 @@ import {Child} from "@/types/ChildProps";
 export function usePointManagement() {
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
+  // Function to select a child
   const selectChild = useCallback((child: Child) => {
     setSelectedChild(child);
   }, []);
 
+  // Function to adjust points (either add or subtract)
   const adjustPoints = useCallback(
     async (childId: string, points: number, activityTitle: string, action: "add" | "subtract") => {
       try {
-        const childRef = doc(db, `users/${selectedChild?.id}/children`, childId);
-        const newPoints = (selectedChild?.points || 0) + (action === "add" ? points : -points);
+        if (!selectedChild) throw new Error("No child selected");
+
+        const childRef = doc(db, `users/${selectedChild.id}/children`, childId);
+        const newPoints = (selectedChild.points || 0) + (action === "add" ? points : -points);
 
         // Update the child's points in Firestore
         await updateDoc(childRef, {points: newPoints});
@@ -28,20 +33,16 @@ export function usePointManagement() {
           dateCompleted: new Date().toISOString(),
         };
 
-        if (selectedChild?.id) {
-          const childHistoryRef = collection(
-            db,
-            "users",
-            selectedChild.id,
-            "children",
-            childId,
-            "history",
-          );
+        const childHistoryRef = collection(
+          db,
+          "users",
+          selectedChild.id,
+          "children",
+          childId,
+          "history",
+        );
 
-          await addDoc(childHistoryRef, historyEntry);
-        } else {
-          throw new Error("Selected child ID is undefined");
-        }
+        await addDoc(childHistoryRef, historyEntry);
 
         // Update local state
         setSelectedChild((prev) => (prev ? {...prev, points: newPoints} : null));

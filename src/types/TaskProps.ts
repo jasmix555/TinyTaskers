@@ -15,17 +15,33 @@ import {
 } from "react-icons/fa";
 import {TbPokeball} from "react-icons/tb";
 
+export interface Reward {
+  id: string;
+  title: string;
+  pointsRequired: number;
+  dateAdded: Date;
+  icon: string;
+  availableFor: string[];
+}
+
+export interface NewReward {
+  id: string;
+  title: string;
+  pointsRequired: number;
+  icon: string;
+  availableFor: string[];
+}
+
 export interface Task {
   id: string;
   title: string;
   description?: string;
   points: number;
   childId: string;
-  dateCreated: Date | Timestamp; // Firestore Timestamp or JS Date
+  dateCreated: Date | Timestamp; // JS Date or Firestore Timestamp
   status?: "finished" | "confirmation" | "completed";
 }
 
-// TaskIcons array with JSX
 export const TaskIcons = [
   {id: "gift", icon: FaGift},
   {id: "appStore", icon: FaAppStore},

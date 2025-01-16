@@ -1,4 +1,4 @@
-// hooks/useFetchChildren.ts
+// hooks/useAuth.ts
 import {useEffect, useState} from "react";
 import {onAuthStateChanged, User} from "firebase/auth";
 import {useRouter} from "next/navigation";
