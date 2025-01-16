@@ -1,22 +1,39 @@
 "use client";
-import {use} from "react";
+
+import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
-import {useEffect} from "react";
-import {FaSackDollar, FaCaretRight} from "react-icons/fa6";
+import {FaCaretDown, FaSackDollar} from "react-icons/fa6";
 import Image from "next/image";
 import Link from "next/link";
+import {FaCaretRight} from "react-icons/fa";
 
 import {useAuth, useFetchChildren} from "@/hooks";
 import {ChildTasks, Loading} from "@/components";
 
 export default function ChildDashboardPage({params}: {params: Promise<{id: string}>}) {
-  const {id} = use(params); // Use React’s `use` to unwrap the promise
-  const {user, loading: authLoading} = useAuth();
+  const [id, setId] = useState<string | null>(null);
 
-  // Pass the user UID to fetch children associated with that user
+  // Unwrap params after the promise resolves
+  useEffect(() => {
+    const getParams = async () => {
+      const resolvedParams = await params;
+
+      setId(resolvedParams.id);
+    };
+
+    getParams();
+  }, [params]);
+
+  const {user, loading: authLoading} = useAuth();
   const {children, loading: fetchingChildrenLoading, error} = useFetchChildren(user?.uid || "");
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const router = useRouter();
+
+  const handleChildChange = (newChildId: string) => {
+    setDropdownOpen(false);
+    router.push(`/child-dashboard/${newChildId}`);
+  };
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -26,14 +43,13 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
     }
   }, [authLoading, user, router]);
 
-  // Find the specific child based on the id from the params
   const child = children?.find((child) => child.id === id);
 
-  if (authLoading || fetchingChildrenLoading) return <Loading />;
+  if (authLoading || fetchingChildrenLoading || id === null) return <Loading />;
   if (error) return <p>Error loading children: {error}</p>;
 
   if (!child) {
-    return <p>No child found!</p>; // Display a message if no child is found
+    return <p>No child found!</p>;
   }
 
   return (
@@ -41,7 +57,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
       <div className={`w-full bg-orange-300 p-4 text-white`}>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
-            {/* child profile picture */}
+            {/* Child profile picture */}
             <div className="h-14 w-14 overflow-hidden rounded-full">
               <Image
                 priority
@@ -53,10 +69,31 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
               />
             </div>
 
-            <div className="rounded-xl bg-gray-600/25 px-4 py-2">
-              <h2 className="font-bold sm:text-xl md:text-4xl">{child.name}</h2>
+            {/* Dropdown for selecting child */}
+            <div className="relative">
+              <button
+                className="flex items-center gap-2 rounded-xl bg-gray-600/25 px-4 py-2 text-xl"
+                onClick={() => setDropdownOpen(!isDropdownOpen)}
+              >
+                <span>{child.name}</span>
+                <FaCaretDown />
+              </button>
+              {isDropdownOpen && (
+                <ul className="absolute left-0 mt-2 w-full rounded-md border border-gray-300 bg-white shadow-lg">
+                  {children.map((childOption) => (
+                    <li
+                      key={childOption.id}
+                      className="cursor-pointer px-4 py-2 text-black hover:bg-gray-100"
+                      onClick={() => handleChildChange(childOption.id)}
+                    >
+                      {childOption.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
+
           <p className="flex items-center gap-2 font-bold sm:text-xl md:text-4xl">
             <span className="font-normal sm:text-lg md:text-3xl">
               <FaSackDollar />
@@ -66,16 +103,13 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
         </div>
       </div>
 
-      {/* Grid Layout Container */}
+      {/* Rest of the layout */}
       <div className="grid px-4 pb-4 pt-4 sm:flex sm:flex-col md:grid md:h-[calc(100vh-88px)] md:grid-cols-5 md:gap-4">
-        {/* Section 1 - Left column (spans full height) */}
         <div className="col-span-3 h-full rounded-2xl bg-orange-200">
           <ChildTasks childId={child.id} />
         </div>
-
-        {/* Right column container */}
         <div className="col-span-2 flex h-full flex-col gap-4">
-          {/* Section 2 - Top right with background image */}
+          {/* Sections for store and memory */}
           <div
             className="relative h-2/3 rounded-2xl p-4"
             style={{
@@ -89,17 +123,14 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
               <h3 className="text-2xl font-bold">なにか買えるかな？</h3>
               <h2 className="text-5xl font-bold">おみせ</h2>
             </div>
-            {/* Button positioned at the bottom right */}
             <Link
               className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100"
               href="/store"
             >
-              おみせへはいる
-              <FaCaretRight />
+              おみせへはいる <FaCaretRight />
             </Link>
           </div>
 
-          {/* Section 3 - Bottom right */}
           <div
             className="relative h-1/3 rounded-2xl p-4"
             style={{
@@ -112,10 +143,8 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
             <div className="flex flex-col gap-2">
               <h2 className="text-5xl font-bold">おもいでノート</h2>
             </div>
-            {/* New button for Section 3 positioned at the bottom right */}
             <button className="absolute bottom-3 right-4 flex items-center gap-2 rounded-full bg-white px-8 py-4 text-2xl font-bold text-black hover:bg-gray-100">
-              ノートをみる
-              <FaCaretRight />
+              ノートをみる <FaCaretRight />
             </button>
           </div>
         </div>

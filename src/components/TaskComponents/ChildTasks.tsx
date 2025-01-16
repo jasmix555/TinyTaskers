@@ -72,10 +72,10 @@ export default function ChildTasks({childId}: ChildTasksProps) {
               {task.status === "confirmation" && (
                 <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
                   <div className="flex h-full w-full items-center justify-center bg-gray-300/50">
-                    <p className="flex items-center text-3xl font-bold text-black">
+                    <p className="flex items-center text-lg font-bold text-black md:text-3xl">
                       <Image
                         alt="confirming"
-                        className="rounded-full"
+                        className="h-20 w-20 rounded-full md:h-28 md:w-28"
                         height={80}
                         src={"/confirming.svg"}
                         width={80}
