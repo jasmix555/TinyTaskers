@@ -54,16 +54,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="container mx-auto max-w-md p-4">
+    <div className="container mx-auto max-w-md">
       {/* if no children registered add button to register child and show no child registered */}
       {children.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-4">
-          <h1 className="text-center text-2xl font-bold">No child registered</h1>
+        <div className="flex h-screen flex-col items-center justify-center gap-4">
+          <h1 className="text-center text-2xl font-bold">登録された子供はいません</h1>
           <button
-            className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md"
+            className="rounded-lg bg-orange-300 px-4 py-2 text-white shadow-md"
             onClick={handleRegisterChild}
           >
-            Register Child
+            子供を登録する
           </button>
         </div>
       )}
@@ -89,15 +89,17 @@ export default function HomePage() {
       )}
 
       {/* move to current children dashboard button*/}
-      <div className="mt-4 flex w-full justify-end">
-        <button
-          className="flex items-center gap-2 border-b-2 border-blue-500 px-1 font-bold text-blue-500"
-          onClick={() => router.push("/child-dashboard/" + selectedChild?.id)}
-        >
-          子供のダッシュボードへ
-          <FaArrowRight />
-        </button>
-      </div>
+      {selectedChild && (
+        <div className="mt-4 flex w-full justify-end">
+          <button
+            className="flex items-center gap-2 border-b-2 border-blue-500 px-1 font-bold text-blue-500"
+            onClick={() => router.push("/child-dashboard/" + selectedChild.id)}
+          >
+            子供のダッシュボードへ
+            <FaArrowRight />
+          </button>
+        </div>
+      )}
 
       {showListPopup && (
         <ChildListPopup

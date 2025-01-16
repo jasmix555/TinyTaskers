@@ -45,11 +45,11 @@ export default function ChildRegistration() {
     try {
       await deleteChild(id);
       setRegisteredChildren((prev) => prev.filter((child) => child.id !== id));
-      setSuccessMessage("Child deleted successfully.");
+      setSuccessMessage("子供が正常に削除されました。");
       setTimeout(() => setSuccessMessage(null), 3000); // Auto-hide message
     } catch (error) {
-      console.error("Error deleting child:", error);
-      setError("Failed to delete the child. Please try again.");
+      console.error("子供の削除中にエラーが発生しました:", error);
+      setError("子供の削除に失敗しました。もう一度お試しください。");
     }
   };
 
@@ -59,16 +59,16 @@ export default function ChildRegistration() {
 
   return (
     <div className="container mx-auto max-w-md p-6">
-      <h1 className="text-2xl font-bold">Child Registration</h1>
-      {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+      <h1 className="text-2xl font-bold">子供の登録</h1>
+      {error && <p className="text-red-500">{error}</p>} {/* エラーメッセージを表示 */}
       {successMessage && (
         <div className="mb-4 rounded bg-green-100 p-2 text-green-800">{successMessage}</div>
       )}{" "}
-      {/* Display success message */}
+      {/* 成功メッセージを表示 */}
       <ChildForm editingChild={editingChild} onSubmit={handleSubmit} />
-      <h2 className="mb-4 mt-6 text-xl font-bold">Registered Children</h2>
+      <h2 className="mb-4 mt-6 text-xl font-bold">登録された子供たち</h2>
       {loading ? (
-        <p>Loading...</p>
+        <p>読み込み中...</p>
       ) : (
         <ChildrenList registeredChildren={registeredChildren} onDelete={handleDelete} />
       )}
@@ -80,7 +80,7 @@ export default function ChildRegistration() {
         }`}
         onClick={handleFinishRegistering}
       >
-        {registeredChildren.length > 0 ? "Finish Registering" : "Back to Home"}
+        {registeredChildren.length > 0 ? "登録を完了する" : "ホームに戻る"}
       </button>
     </div>
   );

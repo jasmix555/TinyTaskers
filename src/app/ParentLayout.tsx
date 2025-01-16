@@ -20,7 +20,7 @@ export default function ParentLayout({children}: ClientLayoutProps) {
 
   return (
     <>
-      <main className={`flex-grow ${showNavbar ? "pb-16" : ""}`}>
+      <main className={`flex-grow ${showNavbar ? "" : ""}`}>
         {children}
         {showNavbar && <Navbar />}
       </main>

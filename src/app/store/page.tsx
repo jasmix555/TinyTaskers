@@ -316,7 +316,7 @@ export default function StorePage() {
           }}
         >
           <FaCaretLeft />
-          ダッシュボードへ戻る
+          ホームへ戻る
         </button>
       </div>
     </div>

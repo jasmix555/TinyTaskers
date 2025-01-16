@@ -24,7 +24,7 @@ export default function ChildEditPage() {
 
   const fetchChildById = async (id: string, uid: string) => {
     try {
-      console.log("Fetching child with ID:", id, "for user:", uid);
+      console.log("IDで子供を取得中:", id, "ユーザー:", uid);
       const childRef = doc(db, `users/${uid}/children/${id}`);
       const childSnapshot = await getDoc(childRef);
 
@@ -33,11 +33,11 @@ export default function ChildEditPage() {
 
         setChild(childData);
       } else {
-        setError("Child not found.");
+        setError("子供が見つかりません。");
       }
     } catch (err) {
-      console.error("Error fetching child:", err);
-      setError("Error fetching child data.");
+      console.error("子供の取得エラー:", err);
+      setError("子供のデータ取得エラー。");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function ChildEditPage() {
       if (currentUser && childId) {
         fetchChildById(childId, currentUser.uid);
       } else {
-        console.log("No user or childId");
+        console.log("ユーザーまたはchildIdがありません");
         setLoading(false);
       }
     });
@@ -70,30 +70,30 @@ export default function ChildEditPage() {
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
-        setError("User not authenticated");
+        setError("ユーザーが認証されていません");
 
         return;
       }
 
       const childRef = doc(db, `users/${currentUser.uid}/children/${child.id}`);
 
-      // Handle picture upload if a new picture is selected
+      // 新しい写真が選択された場合の写真アップロード処理
       if (newPicture) {
         const pictureRef = ref(
           storage,
           child.picture || `users/${currentUser.uid}/children/${child.id}/picture.jpg`,
         );
 
-        // Delete old picture if it exists
+        // 古い写真が存在する場合は削除
         if (child.picture) {
           try {
             await deleteObject(pictureRef);
           } catch (error) {
-            console.log("No old picture to delete or error deleting:", error);
+            console.log("削除する古い写真がないか、削除エラー:", error);
           }
         }
 
-        // Upload new picture
+        // 新しい写真をアップロード
         const snapshot = await uploadBytes(pictureRef, newPicture);
         const downloadURL = await getDownloadURL(snapshot.ref);
 
@@ -103,8 +103,8 @@ export default function ChildEditPage() {
       await updateDoc(childRef, updatedChild);
       router.push("/");
     } catch (err) {
-      console.error("Error updating child:", err);
-      setError("Failed to update child information.");
+      console.error("子供の更新エラー:", err);
+      setError("子供の情報更新に失敗しました。");
     }
   };
 
@@ -140,7 +140,7 @@ export default function ChildEditPage() {
             className="mt-4 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
             onClick={handleBack}
           >
-            Back to Home
+            ホームに戻る
           </button>
         </div>
       </div>
@@ -151,12 +151,12 @@ export default function ChildEditPage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p>Child data not available.</p>
+          <p>子供のデータが利用できません。</p>
           <button
             className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             onClick={handleBack}
           >
-            Back to Home
+            ホームに戻る
           </button>
         </div>
       </div>
@@ -165,15 +165,15 @@ export default function ChildEditPage() {
 
   return (
     <div className="container mx-auto max-w-md p-6">
-      <h1 className="mb-6 text-2xl font-bold">Edit Child Information</h1>
+      <h1 className="mb-6 text-2xl font-bold">子供の情報を編集</h1>
 
       <div className="rounded-lg bg-white p-6 shadow-lg">
-        {/* Circular Picture Section */}
+        {/* 円形の写真セクション */}
         <div className="relative mb-6 flex justify-center">
           <div className="group relative h-32 w-32 overflow-hidden rounded-full border-2 border-gray-300">
             {newPicture ? (
               <Image
-                alt="Child"
+                alt="子供"
                 className="h-full w-full object-cover"
                 height={200}
                 src={URL.createObjectURL(newPicture)}
@@ -182,7 +182,7 @@ export default function ChildEditPage() {
             ) : (
               child.picture && (
                 <Image
-                  alt="Child"
+                  alt="子供"
                   className="h-full w-full object-cover"
                   height={200}
                   src={child.picture}
@@ -210,46 +210,46 @@ export default function ChildEditPage() {
         <div className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="name">
-              Name
+              名前
+              <input
+                className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+                id="name"
+                name="name"
+                type="text"
+                value={child.name}
+                onChange={handleChange}
+              />
             </label>
-            <input
-              className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              id="name"
-              name="name"
-              type="text"
-              value={child.name}
-              onChange={handleChange}
-            />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="gender">
-              Gender
+              性別
+              <select
+                className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+                id="gender"
+                name="gender"
+                value={child.gender}
+                onChange={handleChange}
+              >
+                <option value="M">男性</option>
+                <option value="F">女性</option>
+              </select>
             </label>
-            <select
-              className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              id="gender"
-              name="gender"
-              value={child.gender}
-              onChange={handleChange}
-            >
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </select>
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="birthday">
-              Birthday
+              誕生日
+              <input
+                className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+                id="birthday"
+                name="birthday"
+                type="date"
+                value={child.birthday}
+                onChange={handleChange}
+              />
             </label>
-            <input
-              className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              id="birthday"
-              name="birthday"
-              type="date"
-              value={child.birthday}
-              onChange={handleChange}
-            />
           </div>
         </div>
 
@@ -258,13 +258,13 @@ export default function ChildEditPage() {
             className="rounded-md px-4 py-2 text-gray-600 hover:text-gray-800"
             onClick={handleBack}
           >
-            Cancel
+            キャンセル
           </button>
           <button
             className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             onClick={handleUpdate}
           >
-            Save Changes
+            変更を保存
           </button>
         </div>
       </div>

@@ -19,7 +19,7 @@ export default function ChildSelectPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-      <h1 className="mb-6 text-3xl font-bold">Select a Child Account</h1>
+      <h1 className="mb-6 text-3xl font-bold">子供のアカウントを選択</h1>
       <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {children.map((child) => (
           <li
