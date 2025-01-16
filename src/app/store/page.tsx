@@ -1,8 +1,9 @@
 "use client";
 
 import React, {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import {collection, getDocs, doc, onSnapshot, runTransaction} from "firebase/firestore";
-import {FaSackDollar} from "react-icons/fa6";
+import {FaCaretLeft, FaSackDollar} from "react-icons/fa6";
 
 import {db} from "@/api/firebase";
 import {useAuth} from "@/hooks";
@@ -21,6 +22,16 @@ export default function StorePage() {
   const [rewardCounts, setRewardCounts] = useState<{[key: string]: number}>({});
   const [childPoints, setChildPoints] = useState<number | null>(null); // State for current points
   const {selectedChild, selectChild} = usePointManagement();
+  const [isClient, setIsClient] = useState(false);
+  const [routerReady, setRouterReady] = useState(false); // New state to check router readiness
+
+  const router = useRouter();
+
+  // Ensure the client-side rendering is active before using useRouter
+  useEffect(() => {
+    setIsClient(true); // Set to true once client-side rendering has started
+    setRouterReady(true); // Indicate that the router is ready
+  }, []);
 
   // Fetch children data
   useEffect(() => {
@@ -203,7 +214,7 @@ export default function StorePage() {
       {filteredRewards.length === 0 ? (
         <p className="text-center">No rewards available.</p>
       ) : (
-        <ul>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredRewards.map((reward) => {
             const Icon = TaskIcons.find((icon) => icon.id === reward.icon)?.icon || FaSackDollar;
             const ownedCount = rewardCounts[reward.id] || 0;
@@ -211,23 +222,20 @@ export default function StorePage() {
             return (
               <li
                 key={reward.id}
-                className="mb-4 flex items-center justify-between rounded-lg border p-4 shadow-md"
+                className="flex flex-col items-center justify-between rounded-lg border bg-white p-4 shadow-md"
               >
-                <div className="flex items-center gap-2">
-                  <div className="text-3xl">
-                    <Icon />
-                  </div>
-                  <div>
-                    <p className="font-bold">{reward.title}</p>
-                    <p className="flex items-center gap-1 text-gray-600">
-                      <FaSackDollar /> {reward.pointsRequired}
-                    </p>
-                    <p className="text-sm text-gray-500">Owned: x{ownedCount}</p>{" "}
-                    {/* Owned count here */}
-                  </div>
+                <div className="mb-2 rounded-lg border p-4 text-5xl shadow-sm">
+                  <Icon />
+                </div>
+                <div className="flex flex-col gap-2 text-center">
+                  <p className="text-2xl font-bold">{reward.title}</p>
+                  <p className="flex items-center justify-center gap-1 text-xl text-gray-600">
+                    <FaSackDollar /> {reward.pointsRequired}
+                  </p>
+                  <p className="text-md text-gray-500">Owned: x{ownedCount}</p>
                 </div>
                 <button
-                  className="rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400 disabled:bg-gray-300"
+                  className="mt-4 rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400 disabled:bg-gray-300"
                   disabled={!selectedChild || (childPoints ?? 0) < reward.pointsRequired}
                   onClick={() => {
                     setSelectedReward(reward);
@@ -244,13 +252,24 @@ export default function StorePage() {
 
       {/* Modal for Purchase Confirmation */}
       {isModalOpen && selectedReward && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
             <h2 className="mb-4 text-xl font-bold">Confirm Purchase</h2>
+            <div className="mb-4 flex items-center justify-center">
+              <div className="rounded-lg border p-4 text-5xl shadow-sm">
+                {React.createElement(
+                  TaskIcons.find((icon) => icon.id === selectedReward.icon)?.icon || FaSackDollar,
+                )}
+              </div>
+            </div>
             <p className="mb-4">
               Are you sure you want to purchase <strong>{selectedReward.title}</strong>?
             </p>
-            <div className="flex justify-end gap-4">
+            <p className="mb-4">
+              This will deduct <strong>{selectedReward.pointsRequired}</strong> points from{" "}
+              <strong>{selectedChild?.name}</strong>.
+            </p>
+            <div className="flex justify-between gap-4">
               <button
                 className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
                 onClick={() => setIsModalOpen(false)}
@@ -267,6 +286,20 @@ export default function StorePage() {
           </div>
         </div>
       )}
+
+      <div className="absolute bottom-9 left-14 z-0 rounded-lg">
+        <button
+          className="flex items-center gap-2 rounded-lg border bg-gray-300 bg-white p-4 px-4 py-2 shadow-md hover:bg-gray-100"
+          onClick={() => {
+            if (selectedChild && routerReady) {
+              router.push(`/child-dashboard/${selectedChild.id}`);
+            }
+          }}
+        >
+          <FaCaretLeft />
+          Back to Child Dashboard
+        </button>
+      </div>
     </div>
   );
 }
