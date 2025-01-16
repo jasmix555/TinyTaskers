@@ -18,13 +18,14 @@ export default function StorePage() {
   const [children, setChildren] = useState<Child[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChildDropdownOpen, setIsChildDropdownOpen] = useState(false);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [rewardCounts, setRewardCounts] = useState<{[key: string]: number}>({});
-  const [childPoints, setChildPoints] = useState<number | null>(null); // 現在のポイント
+  const [childPoints, setChildPoints] = useState<number | null>(null);
   const {selectedChild, selectChild} = usePointManagement();
   const [isClient, setIsClient] = useState(false);
-  const [routerReady, setRouterReady] = useState(false); // ルーターの準備状態
+  const [routerReady, setRouterReady] = useState(false);
 
   const router = useRouter();
 
@@ -150,7 +151,7 @@ export default function StorePage() {
         }));
       });
 
-      setIsModalOpen(false);
+      setIsPurchaseModalOpen(false);
       setSelectedReward(null);
     } catch (error) {
       console.error("購入失敗:", error);
@@ -168,7 +169,6 @@ export default function StorePage() {
     <div className="h-screen font-mplus-rounded">
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* ポイント概要 */}
       {selectedChild && (
         <div className="flex w-full items-center justify-between bg-orange-300 p-4 text-white">
           <div className="relative flex items-center gap-3 rounded-lg">
@@ -182,18 +182,15 @@ export default function StorePage() {
                 width={200}
               />
             </div>
-
-            {/* 名前 */}
             <div className="relative">
               <button
                 className="flex items-center gap-2 rounded-xl bg-gray-600/25 px-4 py-2 text-xl"
-                onClick={() => setIsModalOpen((prev) => !prev)}
+                onClick={() => setIsChildDropdownOpen((prev) => !prev)}
               >
                 {selectedChild.name}
                 <FaCaretDown />
               </button>
-
-              {isModalOpen && (
+              {isChildDropdownOpen && (
                 <div className="absolute left-0 top-12 z-10 w-48 rounded-lg border bg-white shadow-lg">
                   <ul>
                     {children.map((child) => (
@@ -204,7 +201,7 @@ export default function StorePage() {
                         }`}
                         onClick={() => {
                           selectChild(child);
-                          setIsModalOpen(false);
+                          setIsChildDropdownOpen(false);
                         }}
                       >
                         {child.name}
@@ -224,7 +221,6 @@ export default function StorePage() {
         </div>
       )}
 
-      {/* ご褒美 */}
       <div
         className="no-scrollbar m-4 overflow-y-scroll rounded-lg bg-orange-200 p-4 shadow-md"
         style={{
@@ -259,7 +255,7 @@ export default function StorePage() {
                     disabled={!selectedChild || (childPoints ?? 0) < reward.pointsRequired}
                     onClick={() => {
                       setSelectedReward(reward);
-                      setIsModalOpen(true);
+                      setIsPurchaseModalOpen(true);
                     }}
                   >
                     {(childPoints ?? 0) >= reward.pointsRequired ? "購入" : "ポイントが足りません"}
@@ -271,7 +267,7 @@ export default function StorePage() {
         )}
       </div>
 
-      {isModalOpen && selectedReward && (
+      {isPurchaseModalOpen && selectedReward && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
             <h2 className="mb-4 text-xl font-bold">購入確認</h2>
@@ -291,7 +287,7 @@ export default function StorePage() {
             <div className="flex justify-between gap-4 text-xl font-bold">
               <button
                 className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => setIsPurchaseModalOpen(false)}
               >
                 キャンセル
               </button>
