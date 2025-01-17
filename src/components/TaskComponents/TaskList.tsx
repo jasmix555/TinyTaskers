@@ -182,7 +182,7 @@ export default function TaskList() {
   if (childrenError) return <p>{childrenError}</p>;
 
   return (
-    <div className="mx-auto mb-24 max-w-md p-4">
+    <div className="mx-auto mb-44 max-w-md p-4">
       <div className="relative" style={{minHeight: "7rem"}}>
         <div className="fixed left-0 right-0 top-0 z-10 flex w-full flex-col gap-1 bg-white p-4 shadow-sm">
           <h2 className="text-center text-2xl font-bold text-gray-800">タスクリスト</h2>

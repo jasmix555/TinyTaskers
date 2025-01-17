@@ -116,6 +116,8 @@ export default function RewardsPage() {
   };
 
   const fetchRewards = async () => {
+    if (!user) return;
+
     try {
       const rewardsRef = collection(db, "rewards");
       const rewardsSnapshot = await getDocs(rewardsRef);
@@ -125,7 +127,12 @@ export default function RewardsPage() {
         dateAdded: doc.data().dateAdded.toDate(),
       })) as Reward[];
 
-      setRewards(rewardsList);
+      // Filter rewards to only include those available for the user's children
+      const filteredRewards = rewardsList.filter((reward) =>
+        reward.availableFor.some((childId) => children.some((child) => child.id === childId)),
+      );
+
+      setRewards(filteredRewards);
     } catch (err) {
       setError("報酬の読み込みに失敗しました。");
       console.error(err);
@@ -133,8 +140,10 @@ export default function RewardsPage() {
   };
 
   useEffect(() => {
-    fetchRewards();
-  }, []);
+    if (children.length > 0) {
+      fetchRewards();
+    }
+  }, [children]);
 
   const handleEditReward = (id: string) => {
     const rewardToEdit = rewards.find((reward) => reward.id === id);

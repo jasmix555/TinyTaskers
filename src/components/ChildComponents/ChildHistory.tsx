@@ -63,7 +63,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="z-0 mt-2 rounded-lg border border-gray-200 bg-white shadow-md">
+    <div className="z-0 mx-2 rounded-lg border border-gray-200 bg-white shadow-md">
       {/* 固定ヘッダー */}
       <div className="sticky top-0 rounded-t-lg border-b border-gray-200 bg-white px-4 py-2">
         <h3 className="text-xl font-semibold">直近の入出ポイント</h3>
@@ -80,8 +80,13 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
           <p>この子供の活動履歴は見つかりませんでした。</p>
         ) : (
           <ul className="space-y-2">
-            {history.map((entry) => (
-              <li key={entry.id} className="flex w-full items-center justify-between">
+            {history.map((entry, index) => (
+              <li
+                key={entry.id}
+                className={`flex w-full items-center justify-between ${
+                  index !== history.length - 1 ? "border-b border-gray-200 pb-2" : ""
+                }`}
+              >
                 <div className="flex-1">
                   <p className="text-lg font-bold">{entry.title}</p>
                   <p className="text-md text-gray-400">

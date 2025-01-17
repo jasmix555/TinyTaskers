@@ -70,7 +70,7 @@ export default function HomePage() {
 
       {children.length > 0 && selectedChild && (
         <button
-          className="flex w-full cursor-pointer items-center gap-4 rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 bg-white p-4 shadow-md"
+          className="flex w-full cursor-pointer items-center gap-4 rounded-b-lg border-b border-gray-200 bg-white p-4 shadow-md"
           onClick={() => setShowListPopup(true)}
         >
           <div className="h-14 w-14 overflow-hidden rounded-full">
@@ -90,9 +90,9 @@ export default function HomePage() {
 
       {/* move to current children dashboard button*/}
       {selectedChild && (
-        <div className="mt-4 flex w-full justify-end">
+        <div className="flex w-full justify-end p-4">
           <button
-            className="flex items-center gap-2 border-b-2 border-blue-500 px-1 font-bold text-blue-500"
+            className="flex items-center gap-2 border-b-2 border-blue-500 font-bold text-blue-500"
             onClick={() => router.push("/child-dashboard/" + selectedChild.id)}
           >
             子供のダッシュボードへ
