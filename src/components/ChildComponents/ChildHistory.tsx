@@ -86,7 +86,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
 
       {/* Scrollable Content */}
       <div
-        className="no-scrollbar overflow-y-auto p-4"
+        className="no-scrollbar overflow-y-auto"
         style={{
           maxHeight: "calc(100vh - 20rem)",
         }}
@@ -98,10 +98,17 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
             {history.map((entry, index) => (
               <li
                 key={entry.id}
-                className={`flex w-full flex-col justify-between ${
-                  index !== history.length - 1 ? "border-b border-gray-200 pb-2" : ""
+                className={`relative flex w-full flex-col justify-between px-4 py-2 ${
+                  index !== history.length - 1 ? "border-b border-gray-200" : ""
                 }`}
               >
+                {/* Purchased overlay */}
+                {entry.purchased && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                    <p className="text-2xl font-bold text-white">購入済み</p>
+                  </div>
+                )}
+
                 <div className="flex w-full items-center justify-between gap-2">
                   <div className="flex-1">
                     <p className="text-lg font-bold">{entry.title}</p>
@@ -109,25 +116,21 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
                       {entry.dateCompleted.toLocaleDateString()}
                     </p>
                   </div>
-                  <div>
-                    {entry.action === "subtract" && !entry.purchased && (
-                      <button
-                        className="w-fit rounded-md bg-blue-500 px-4 py-2 text-sm text-white shadow-md hover:bg-blue-600"
-                        onClick={() => markAsPurchased(entry.id)}
-                      >
-                        購入済みとしてマーク
-                      </button>
-                    )}
-                    {entry.action === "subtract" && entry.purchased && (
-                      <p className="w-fit rounded-md bg-green-500 px-4 py-2 text-sm text-white shadow-md">
-                        購入済み
-                      </p>
-                    )}
-                  </div>
+
                   <p className="text-xl font-bold">
                     {entry.action === "add" ? "+" : "-"}
                     {entry.points}pt
                   </p>
+
+                  {/* Purchase button */}
+                  {entry.action === "subtract" && !entry.purchased && (
+                    <button
+                      className="absolute left-1/2 z-20 -translate-x-1/2 transform rounded-md bg-blue-500 px-4 py-2 text-sm text-white shadow-md hover:bg-blue-600"
+                      onClick={() => markAsPurchased(entry.id)}
+                    >
+                      購入済みとしてマーク
+                    </button>
+                  )}
                 </div>
               </li>
             ))}
