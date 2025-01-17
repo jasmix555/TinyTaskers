@@ -2,9 +2,9 @@
 import {Timestamp} from "firebase/firestore";
 import {
   FaGift,
+  FaAppStore,
   FaGamepad,
   FaStar,
-  FaAppStore,
   FaTrophy,
   FaMedal,
   FaShoppingCart,
@@ -12,9 +12,17 @@ import {
   FaPlane,
   FaLaptop,
   FaFutbol,
+  FaMusic,
+  FaTree,
+  FaPaintBrush,
+  FaFlask,
+  FaAppleAlt,
+  FaBook,
+  FaCamera,
+  FaRobot,
 } from "react-icons/fa";
-import {MdOutlineSmartToy} from "react-icons/md";
-
+import {LuToyBrick} from "react-icons/lu";
+import {GiPopcorn, GiChocolateBar} from "react-icons/gi";
 export interface Reward {
   id: string;
   title: string;
@@ -22,8 +30,8 @@ export interface Reward {
   dateAdded: Date;
   icon: string;
   availableFor: string[];
-  isPurchased?: boolean; // New field
-  inventory: number; // Add inventory field
+  isPurchased?: boolean;
+  inventory: number;
 }
 
 export interface NewReward {
@@ -41,7 +49,7 @@ export interface Task {
   description?: string;
   points: number;
   childId: string;
-  dateCreated: Date | Timestamp; // JS Date or Firestore Timestamp
+  dateCreated: Date | Timestamp;
   status?: "finished" | "confirmation" | "completed";
 }
 
@@ -49,13 +57,24 @@ export const TaskIcons = [
   {id: "gift", icon: FaGift},
   {id: "appStore", icon: FaAppStore},
   {id: "gamepad", icon: FaGamepad},
-  {id: "pokeball", icon: MdOutlineSmartToy},
   {id: "star", icon: FaStar},
   {id: "trophy", icon: FaTrophy},
   {id: "medal", icon: FaMedal},
   {id: "shoppingCart", icon: FaShoppingCart},
+  {id: "snacks", icon: GiChocolateBar},
+  {id: "popcorn", icon: GiPopcorn},
+  {id: "lego", icon: LuToyBrick},
   {id: "globe", icon: FaGlobe},
   {id: "plane", icon: FaPlane},
   {id: "laptop", icon: FaLaptop},
-  {id: "futbol", icon: FaFutbol},
+  {id: "sports", icon: FaFutbol},
+  {id: "music", icon: FaMusic},
+  {id: "nature", icon: FaTree},
+  {id: "creativity", icon: FaPaintBrush},
+  {id: "science", icon: FaFlask},
+  {id: "health", icon: FaAppleAlt},
+  {id: "books", icon: FaBook},
+  {id: "travel", icon: FaPlane},
+  {id: "animals", icon: FaCamera},
+  {id: "toy", icon: FaRobot},
 ];

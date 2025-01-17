@@ -232,7 +232,7 @@ export default function StorePage() {
                 >
                   {reward.inventory === 0 && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black bg-opacity-50">
-                      <p className="text-2xl font-bold text-white">もうおしまい</p>
+                      <p className="text-2xl font-bold text-white">かってもらった！</p>
                     </div>
                   )}
 
