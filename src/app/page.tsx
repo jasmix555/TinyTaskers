@@ -2,7 +2,6 @@
 import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
-import {FaArrowRight} from "react-icons/fa";
 
 import {useAuth, useFetchChildren} from "@/hooks";
 import {Child} from "@/types/ChildProps";
@@ -13,6 +12,7 @@ export default function HomePage() {
   const {children, loading: childrenLoading} = useFetchChildren(user?.uid || "");
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
   const [showListPopup, setShowListPopup] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
   const router = useRouter();
 
   // Redirect to welcome page if user is not logged in
@@ -47,6 +47,17 @@ export default function HomePage() {
 
   const handleRegisterChild = () => {
     router.push("/child-registration");
+  };
+
+  const handleCopyLink = () => {
+    if (selectedChild) {
+      const childDashboardLink = `${window.location.origin}/child-dashboard/${selectedChild.id}`;
+
+      navigator.clipboard.writeText(childDashboardLink).then(() => {
+        setNotification(`${selectedChild.name}のリンクがコピーされました`);
+        setTimeout(() => setNotification(null), 3000); // Hide notification after 3 seconds
+      });
+    }
   };
 
   if (authLoading || childrenLoading) {
@@ -88,15 +99,14 @@ export default function HomePage() {
         </button>
       )}
 
-      {/* move to current children dashboard button*/}
+      {/* Copy Link Button */}
       {selectedChild && (
         <div className="flex w-full justify-end p-4">
           <button
-            className="flex items-center gap-2 border-b-2 border-blue-500 font-bold text-blue-500"
-            onClick={() => router.push("/child-dashboard/" + selectedChild.id)}
+            className="rounded-md bg-blue-500 px-4 py-2 text-white shadow-md hover:bg-blue-600"
+            onClick={handleCopyLink}
           >
-            子供のダッシュボードへ
-            <FaArrowRight />
+            リンクをコピー
           </button>
         </div>
       )}
@@ -109,6 +119,13 @@ export default function HomePage() {
           onRegister={handleRegisterChild}
           onSelect={handleSelectChild}
         />
+      )}
+
+      {/* Notification */}
+      {notification && (
+        <div className="fixed left-1/2 top-4 -translate-x-1/2 transform rounded-lg bg-green-500 px-4 py-2 text-white shadow-lg">
+          {notification}
+        </div>
       )}
 
       {/* Display ChildHistory below the child selection */}
