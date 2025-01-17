@@ -21,7 +21,6 @@ export default function StorePage() {
   const [isChildDropdownOpen, setIsChildDropdownOpen] = useState(false);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
-  const [rewardCounts, setRewardCounts] = useState<{[key: string]: number}>({});
   const [childPoints, setChildPoints] = useState<number | null>(null);
   const {selectedChild, selectChild} = usePointManagement();
   const [isClient, setIsClient] = useState(false);
@@ -61,7 +60,6 @@ export default function StorePage() {
     if (!user || !selectedChild) return;
 
     const childRef = doc(db, "users", user.uid, "children", selectedChild.id);
-    const itemsRef = collection(childRef, "items");
 
     const unsubscribeChild = onSnapshot(childRef, (doc) => {
       if (doc.exists()) {
@@ -70,26 +68,6 @@ export default function StorePage() {
         setChildPoints(childData.points || 0);
       }
     });
-
-    const fetchItems = async () => {
-      try {
-        const itemsSnapshot = await getDocs(itemsRef);
-        const itemsData = itemsSnapshot.docs.reduce(
-          (acc, doc) => {
-            acc[doc.id] = doc.data().count || 0;
-
-            return acc;
-          },
-          {} as {[key: string]: number},
-        );
-
-        setRewardCounts(itemsData);
-      } catch (err) {
-        console.error("データを読み込めませんでした。", err);
-      }
-    };
-
-    fetchItems();
 
     return () => unsubscribeChild();
   }, [user, selectedChild]);
@@ -132,23 +110,31 @@ export default function StorePage() {
         if (currentPoints < selectedReward.pointsRequired)
           throw new Error("ポイントが足りません。");
 
+        const rewardRef = doc(db, "rewards", selectedReward.id);
+        const rewardDoc = await transaction.get(rewardRef);
+        const rewardData = rewardDoc.data();
+
+        if (!rewardData || rewardData.inventory <= 0) throw new Error("在庫がありません。");
+
         const itemDoc = await transaction.get(itemRef);
-        const currentCount = itemDoc.exists() ? itemDoc.data().count : 0;
+        const currentCount = itemDoc.exists() ? itemDoc.data()?.count || 0 : 0;
 
         transaction.update(childRef, {points: currentPoints - selectedReward.pointsRequired});
         transaction.set(itemRef, {count: currentCount + 1}, {merge: true});
         transaction.set(doc(historyRef), {
           title: selectedReward.title,
           points: selectedReward.pointsRequired,
-          action: "引く",
+          action: "subtract",
           dateCompleted: new Date(),
         });
+        transaction.update(rewardRef, {inventory: rewardData.inventory - 1});
 
         setChildPoints(currentPoints - selectedReward.pointsRequired);
-        setRewardCounts((prev) => ({
-          ...prev,
-          [selectedReward.id]: (prev[selectedReward.id] || 0) + 1,
-        }));
+        setRewards((prevRewards) =>
+          prevRewards.map((reward) =>
+            reward.id === selectedReward.id ? {...reward, inventory: reward.inventory - 1} : reward,
+          ),
+        );
       });
 
       setIsPurchaseModalOpen(false);
@@ -162,6 +148,11 @@ export default function StorePage() {
   const filteredRewards = selectedChild
     ? rewards.filter((reward) => reward.availableFor.includes(selectedChild.id))
     : rewards;
+
+  const availableRewards = filteredRewards.filter((reward) => reward.inventory > 0);
+  const soldOutRewards = filteredRewards.filter((reward) => reward.inventory === 0);
+
+  const sortedRewards = [...availableRewards, ...soldOutRewards];
 
   if (!user) return <Loading />;
 
@@ -227,20 +218,27 @@ export default function StorePage() {
           height: "calc(100vh - 7.8rem)",
         }}
       >
-        {filteredRewards.length === 0 ? (
+        {sortedRewards.length === 0 ? (
           <p className="text-center">ご褒美がありません。</p>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredRewards.map((reward) => {
+            {sortedRewards.map((reward) => {
               const Icon = TaskIcons.find((icon) => icon.id === reward.icon)?.icon || FaSackDollar;
-              const ownedCount = rewardCounts[reward.id] || 0;
 
               return (
                 <li
                   key={reward.id}
-                  className="flex flex-col items-center justify-between rounded-lg border bg-white p-4 shadow-md"
+                  className="relative flex flex-col items-center rounded-lg bg-white p-4 shadow-md"
                 >
-                  <div className="mb-2 rounded-lg border p-4 text-5xl shadow-sm">
+                  {reward.inventory === 0 && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black bg-opacity-50">
+                      <p className="text-2xl font-bold text-white">もうおしまい</p>
+                    </div>
+                  )}
+
+                  <div
+                    className={`mb-2 rounded-lg border p-4 text-5xl shadow-sm ${reward.inventory === 0 ? "opacity-50" : ""}`}
+                  >
                     <Icon />
                   </div>
                   <div className="flex flex-col gap-2 text-center">
@@ -248,18 +246,19 @@ export default function StorePage() {
                     <p className="flex items-center justify-center gap-1 text-xl text-gray-600">
                       <FaSackDollar /> {reward.pointsRequired}
                     </p>
-                    <p className="text-md text-gray-500">持っている: x{ownedCount}</p>
+                    <p className="text-md text-gray-500">在庫: {reward.inventory}</p>
                   </div>
-                  <button
-                    className="mt-4 rounded-lg bg-orange-300 px-4 py-2 text-xl font-bold text-white hover:bg-orange-400 disabled:bg-gray-300"
-                    disabled={!selectedChild || (childPoints ?? 0) < reward.pointsRequired}
-                    onClick={() => {
-                      setSelectedReward(reward);
-                      setIsPurchaseModalOpen(true);
-                    }}
-                  >
-                    {(childPoints ?? 0) >= reward.pointsRequired ? "購入" : "ポイントが足りません"}
-                  </button>
+                  {reward.inventory > 0 && (childPoints ?? 0) >= reward.pointsRequired && (
+                    <button
+                      className="mt-4 rounded-lg bg-orange-300 px-4 py-2 text-xl font-bold text-white hover:bg-orange-400 disabled:bg-gray-300"
+                      onClick={() => {
+                        setSelectedReward(reward);
+                        setIsPurchaseModalOpen(true);
+                      }}
+                    >
+                      おねがいする
+                    </button>
+                  )}
                 </li>
               );
             })}
@@ -295,7 +294,7 @@ export default function StorePage() {
                 className="rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
                 onClick={handlePurchase}
               >
-                購入
+                おねがいする
               </button>
             </div>
           </div>

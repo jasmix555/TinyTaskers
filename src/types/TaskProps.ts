@@ -22,6 +22,8 @@ export interface Reward {
   dateAdded: Date;
   icon: string;
   availableFor: string[];
+  isPurchased?: boolean; // New field
+  inventory: number; // Add inventory field
 }
 
 export interface NewReward {
@@ -30,6 +32,7 @@ export interface NewReward {
   pointsRequired: number;
   icon: string;
   availableFor: string[];
+  inventory: number; // Add inventory field
 }
 
 export interface Task {

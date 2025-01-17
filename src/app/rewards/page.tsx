@@ -7,25 +7,9 @@ import {FaSackDollar} from "react-icons/fa6";
 
 import {db} from "@/api/firebase";
 import {useAuth, useFetchChildren} from "@/hooks";
-import {TaskIcons} from "@/types/TaskProps"; // Import TaskIcons
+import {TaskIcons} from "@/types/TaskProps";
 import {Loading} from "@/components";
-
-interface Reward {
-  id: string;
-  title: string;
-  pointsRequired: number;
-  dateAdded: Date;
-  icon: string;
-  availableFor: string[];
-}
-
-interface NewReward {
-  id: string;
-  title: string;
-  pointsRequired: number;
-  icon: string;
-  availableFor: string[];
-}
+import {Reward, NewReward} from "@/types/TaskProps";
 
 export default function RewardsPage() {
   const {user, loading: authLoading} = useAuth();
@@ -37,6 +21,7 @@ export default function RewardsPage() {
     pointsRequired: 0,
     icon: "",
     availableFor: [],
+    inventory: 0,
   });
 
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -69,6 +54,7 @@ export default function RewardsPage() {
           pointsRequired: newReward.pointsRequired,
           icon: newReward.icon,
           availableFor: newReward.availableFor,
+          inventory: newReward.inventory,
         });
 
         setRewards((prevRewards) =>
@@ -83,6 +69,7 @@ export default function RewardsPage() {
           pointsRequired: newReward.pointsRequired,
           icon: newReward.icon,
           availableFor: newReward.availableFor,
+          inventory: newReward.inventory,
           dateAdded: new Date(),
         });
 
@@ -92,6 +79,7 @@ export default function RewardsPage() {
           pointsRequired: newReward.pointsRequired,
           icon: newReward.icon,
           availableFor: newReward.availableFor,
+          inventory: newReward.inventory,
           dateAdded: new Date(),
         };
 
@@ -104,6 +92,7 @@ export default function RewardsPage() {
         pointsRequired: 0,
         icon: "",
         availableFor: [],
+        inventory: 0,
       });
       setError(null);
       setIsModalOpen(false);
@@ -127,7 +116,6 @@ export default function RewardsPage() {
         dateAdded: doc.data().dateAdded.toDate(),
       })) as Reward[];
 
-      // Filter rewards to only include those available for the user's children
       const filteredRewards = rewardsList.filter((reward) =>
         reward.availableFor.some((childId) => children.some((child) => child.id === childId)),
       );
@@ -155,6 +143,7 @@ export default function RewardsPage() {
         pointsRequired: rewardToEdit.pointsRequired,
         icon: rewardToEdit.icon,
         availableFor: rewardToEdit.availableFor,
+        inventory: rewardToEdit.inventory,
       });
       setIsEditMode(true);
       setIsModalOpen(true);
@@ -195,12 +184,18 @@ export default function RewardsPage() {
           className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-300 px-4 py-2 text-2xl font-bold text-white shadow-md hover:bg-orange-400"
           onClick={() => {
             setIsEditMode(false);
+            setNewReward({
+              id: "",
+              title: "",
+              pointsRequired: 0,
+              icon: "",
+              availableFor: [],
+              inventory: 0,
+            });
             setIsModalOpen(true);
           }}
         >
-          <span>
-            <FaPlus />
-          </span>
+          <FaPlus />
           欲しいものを追加する
         </button>
       </div>
@@ -211,23 +206,42 @@ export default function RewardsPage() {
               {isEditMode ? "報酬を編集する" : "新しい報酬を追加する"}
             </h2>
             <div className="mb-4">
-              <input
-                className="mb-2 w-full rounded-lg border border-gray-300 p-2"
-                placeholder="商品名を入力。。。"
-                type="text"
-                value={newReward.title}
-                onChange={(e) => setNewReward({...newReward, title: e.target.value})}
-              />
+              <label htmlFor="title">
+                商品名を入力する
+                <input
+                  className="mb-2 w-full rounded-lg border border-gray-300 p-2"
+                  id="title"
+                  placeholder="商品名を入力。。。"
+                  type="text"
+                  value={newReward.title}
+                  onChange={(e) => setNewReward({...newReward, title: e.target.value})}
+                />
+              </label>
+              <label htmlFor="pointsRequired">
+                必要なポイントを入力する
+                <input
+                  className="w-full rounded-lg border border-gray-300 p-2"
+                  id="pointsRequired"
+                  placeholder="必要なポイント"
+                  type="number"
+                  value={newReward.pointsRequired}
+                  onChange={(e) =>
+                    setNewReward({...newReward, pointsRequired: parseInt(e.target.value)})
+                  }
+                />
+              </label>
+            </div>
+            <label className="mb-2 block" htmlFor="inventory">
+              在庫数を入力する
               <input
                 className="w-full rounded-lg border border-gray-300 p-2"
-                placeholder="必要なポイント"
+                id="inventory"
+                placeholder="在庫数"
                 type="number"
-                value={newReward.pointsRequired}
-                onChange={(e) =>
-                  setNewReward({...newReward, pointsRequired: parseInt(e.target.value)})
-                }
+                value={newReward.inventory}
+                onChange={(e) => setNewReward({...newReward, inventory: parseInt(e.target.value)})}
               />
-            </div>
+            </label>
             <label className="mb-2 block">
               アイコンを選択する
               <div className="grid max-h-52 grid-cols-3 gap-2 overflow-auto rounded-lg border border-gray-300 p-2">
@@ -279,7 +293,7 @@ export default function RewardsPage() {
                 className="rounded-lg bg-orange-300 px-4 py-2 text-white"
                 onClick={handleAddReward}
               >
-                {isEditMode ? "変更を保存する" : "報酬を追加する"}
+                {isEditMode ? "変更を保存する" : "商品を追加する"}
               </button>
             </div>
           </div>
@@ -305,29 +319,34 @@ export default function RewardsPage() {
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-3xl">
                     <Icon />
                   </div>
-                  <div className="flex-1">
-                    <p className="w-36 truncate font-bold">{reward.title}</p>
-                    <p className="flex gap-1 text-gray-600">
-                      <span>
-                        <FaSackDollar className="text-md inline-block" />
-                      </span>
-                      <span className="text-lg">{reward.pointsRequired}</span>
+                  <div className="flex flex-col">
+                    <p className="w-36 truncate text-xl font-bold">{reward.title}</p>
+                    <p className="text-sm">
+                      残り在庫 : <span>{reward.inventory}</span>
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    className="rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400"
-                    onClick={() => handleEditReward(reward.id)}
-                  >
-                    編集
-                  </button>
-                  <button
-                    className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                    onClick={() => handleDeleteReward(reward.id)}
-                  >
-                    削除
-                  </button>
+                <div className="flex flex-col">
+                  <div className="flex w-full justify-end">
+                    <p className="flex items-center gap-1 text-lg text-gray-600">
+                      <FaSackDollar className="inline-block" />
+                      <span>{reward.pointsRequired}</span>
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400"
+                      onClick={() => handleEditReward(reward.id)}
+                    >
+                      編集
+                    </button>
+                    <button
+                      className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                      onClick={() => handleDeleteReward(reward.id)}
+                    >
+                      削除
+                    </button>
+                  </div>
                 </div>
               </li>
             );
