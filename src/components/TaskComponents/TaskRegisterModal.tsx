@@ -65,7 +65,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
             タスクタイトル
             <input
               required
-              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
+              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               placeholder="タスクタイトルを入力してください"
               type="text"
               value={title}
@@ -76,7 +76,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
           <label className="block text-sm font-medium text-gray-700">
             タスクの説明
             <textarea
-              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
+              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               placeholder="タスクの説明を入力してください（任意）"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -87,7 +87,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
             子どもを選択
             <select
               required
-              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
+              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               value={selectedChild}
               onChange={(e) => setSelectedChild(e.target.value)}
             >
@@ -105,7 +105,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
             タスクのポイント
             <input
               required
-              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-orange-300 focus:outline-none"
+              className="mt-1 block w-full border-b-2 border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               placeholder="タスクのポイントを入力してください"
               type="number"
               value={points}
@@ -122,7 +122,7 @@ export default function TaskRegisterModal({isOpen, onClose, onTaskAdded}: TaskRe
               キャンセル
             </button>
             <button
-              className="rounded bg-orange-300 px-4 py-2 text-white shadow-sm hover:bg-orange-400"
+              className="rounded bg-blue-500 px-4 py-2 text-white shadow-sm hover:bg-blue-600"
               type="submit"
             >
               タスクを追加

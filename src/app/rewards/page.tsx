@@ -181,7 +181,7 @@ export default function RewardsPage() {
       <h1 className="mb-4 text-center text-2xl font-bold text-gray-900">ストア</h1>
       <div className="mb-4">
         <button
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-300 px-4 py-2 text-2xl font-bold text-white shadow-md hover:bg-orange-400"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-2xl font-bold text-white shadow-md hover:bg-blue-600"
           onClick={() => {
             setIsEditMode(false);
             setNewReward({
@@ -290,7 +290,7 @@ export default function RewardsPage() {
                 キャンセル
               </button>
               <button
-                className="rounded-lg bg-orange-300 px-4 py-2 text-white"
+                className="rounded-lg bg-blue-500 px-4 py-2 text-white"
                 onClick={handleAddReward}
               >
                 {isEditMode ? "変更を保存する" : "商品を追加する"}
@@ -319,23 +319,23 @@ export default function RewardsPage() {
                   <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-3xl">
                     <Icon />
                   </div>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-1">
                     <p className="w-36 truncate text-xl font-bold">{reward.title}</p>
-                    <p className="text-sm">
+                    <p className="text-sm text-gray-500">
                       残り在庫 : <span>{reward.inventory}</span>
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col">
                   <div className="flex w-full justify-end">
-                    <p className="flex items-center gap-1 text-lg text-gray-600">
+                    <p className="flex items-center gap-1 text-lg text-black">
                       <FaSackDollar className="inline-block" />
                       <span>{reward.pointsRequired}</span>
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <button
-                      className="rounded-lg bg-orange-300 px-4 py-2 text-white hover:bg-orange-400"
+                      className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                       onClick={() => handleEditReward(reward.id)}
                     >
                       編集

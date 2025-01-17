@@ -112,7 +112,7 @@ export default function TaskEditForm({taskId, onClose, updateTaskList}: TaskEdit
             キャンセル
           </button>
           <button
-            className="rounded bg-orange-300 px-4 py-2 text-white hover:bg-orange-400"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             type="submit"
           >
             タスクを更新

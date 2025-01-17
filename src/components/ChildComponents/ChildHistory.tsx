@@ -113,7 +113,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
                   <div className="flex-1">
                     <p className="text-lg font-bold">{entry.title}</p>
                     <p className="text-md text-gray-400">
-                      {entry.dateCompleted.toLocaleDateString()}
+                      {entry.dateCompleted.toLocaleDateString("ja-JP")}
                     </p>
                   </div>
 

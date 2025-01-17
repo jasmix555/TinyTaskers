@@ -203,7 +203,7 @@ export default function TaskList() {
                 <div className="px-4 py-2">
                   <button
                     aria-selected={sortOption === "日付"}
-                    className="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 p-2 text-left hover:bg-orange-100"
+                    className="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 p-2 text-left hover:bg-blue-600"
                     role="option"
                     onClick={() => handleSortOptionChange("日付")}
                   >
@@ -212,7 +212,7 @@ export default function TaskList() {
                   </button>
                   <button
                     aria-selected={sortOption === "ポイント"}
-                    className="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 p-2 text-left hover:bg-orange-100"
+                    className="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 p-2 text-left hover:bg-blue-600"
                     role="option"
                     onClick={() => handleSortOptionChange("ポイント")}
                   >
@@ -310,7 +310,7 @@ export default function TaskList() {
       {/* タスク追加ボタン */}
       <div className="fixed bottom-32 right-6">
         <button
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-300 text-white shadow-lg transition duration-200 hover:bg-orange-400"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg transition duration-200 hover:bg-blue-600"
           onClick={() => setIsRegisterModalOpen(true)}
         >
           <FaPlus className="text-2xl" />
