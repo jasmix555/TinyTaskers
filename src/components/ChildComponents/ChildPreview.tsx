@@ -36,14 +36,14 @@ const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
         </div>
         <div>
           <h3 className="text-lg font-semibold">{child.name}</h3>
-          <p>Gender: {child.gender === "M" ? "Male" : "Female"}</p>
-          <p>Age: {new Date().getFullYear() - new Date(child.birthday).getFullYear()}</p>
+          <p>性別: {child.gender === "M" ? "男性" : "女性"}</p>
+          <p>年齢: {new Date().getFullYear() - new Date(child.birthday).getFullYear()}歳</p>
           <button
             className="flex items-center gap-2 rounded bg-green-500 px-2 py-1 text-sm text-white hover:bg-green-600"
             onClick={clickToSave}
           >
             <FaClipboard />
-            Copy ID
+            IDをコピー
           </button>
         </div>
       </div>
@@ -52,7 +52,7 @@ const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
           className="mr-2 mt-2 rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
           onClick={handleEdit}
         >
-          Edit
+          編集する
         </button>
         <DeleteButton
           childId={child.id}

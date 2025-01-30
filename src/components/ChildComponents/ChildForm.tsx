@@ -103,20 +103,20 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
       {/* Form Fields */}
       <div className="mb-4">
         <label className="mb-1 block" htmlFor="childName">
-          Name:
+          名前:
         </label>
         <input
           required
           className="mt-1 block w-full rounded-md border-2 border-gray-300 px-4 py-2 text-black placeholder-gray-300 shadow-sm"
           id="childName"
-          placeholder='e.g. "John"'
+          placeholder="例：田中 太郎"
           type="text"
           value={childName}
           onChange={(e) => setChildName(e.target.value)}
         />
       </div>
       <div className="mb-4">
-        <span className="mb-1 block">Gender:</span>
+        <span className="mb-1 block">性別:</span>
         <div className="flex items-center">
           <label className="mr-4">
             <input
@@ -126,7 +126,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
               value="M"
               onChange={() => setGender("M")}
             />
-            Male
+            男性
           </label>
           <label>
             <input
@@ -136,13 +136,13 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
               value="F"
               onChange={() => setGender("F")}
             />
-            Female
+            女性
           </label>
         </div>
       </div>
       <div className="mb-4">
         <label className="mb-1 block" htmlFor="birthday">
-          Birthday:
+          生年月日:
         </label>
         <input
           required
@@ -155,7 +155,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
       </div>
       <div className="mb-4">
         <label className="mb-1 block" htmlFor="points">
-          Points:
+          ポイント数:
         </label>
         <input
           required
@@ -168,7 +168,7 @@ const ChildForm = ({onSubmit, editingChild}: ChildFormProps) => {
         />
       </div>
       <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" type="submit">
-        Register Child
+        子供を登録
       </button>
     </form>
   );

@@ -21,7 +21,9 @@ const ChildrenList = ({registeredChildren, onDelete}: ChildrenListProps) => {
   return (
     <div className="flex flex-col gap-4">
       {children.length === 0 ? (
-        <p className="text-center text-gray-500">No children registered yet.</p>
+        <p className="text-center text-gray-500">
+          登録された子供がいません。新しい子供を登録してください。
+        </p>
       ) : (
         children.map((child) => (
           <ChildPreview key={child.id} child={child} onDelete={() => onDelete(child.id)} />
