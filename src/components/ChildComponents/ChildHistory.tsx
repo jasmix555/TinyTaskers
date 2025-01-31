@@ -125,7 +125,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
                   {/* Purchase button */}
                   {entry.action === "subtract" && !entry.purchased && (
                     <button
-                      className="absolute left-1/2 z-20 -translate-x-1/2 transform rounded-md bg-blue-500 px-4 py-2 text-sm text-white shadow-md hover:bg-blue-600"
+                      className="absolute left-1/2 z-20 -translate-x-1/2 transform rounded-md bg-blue-500 bg-opacity-80 px-4 py-2 text-sm text-white shadow-md hover:bg-blue-600"
                       onClick={() => markAsPurchased(entry.id)}
                     >
                       購入済みとしてマーク
