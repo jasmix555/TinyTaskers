@@ -28,7 +28,7 @@ const ChildPreview = ({child, onDelete}: ChildPreviewProps) => {
           <Image
             priority
             alt={child.name}
-            className="rounded-full"
+            className="rounded-full bg-contain"
             height={200}
             src={child.picture || "/default-child.png"}
             width={200}

@@ -22,7 +22,7 @@ export default function TaskList() {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 
   const [sortOption, setSortOption] = useState("日付"); // デフォルトは日付順
-  const [sortOrder, setSortOrder] = useState("asc"); // デフォルトは昇順
+  const [sortOrder, setSortOrder] = useState("desc"); // デフォルトは昇順
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {

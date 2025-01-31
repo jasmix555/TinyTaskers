@@ -92,7 +92,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
         }}
       >
         {history.length === 0 ? (
-          <p>この子供の活動履歴は見つかりませんでした。</p>
+          <p className="p-4">この子供の活動履歴は見つかりませんでした。</p>
         ) : (
           <ul className="space-y-2">
             {history.map((entry, index) => (

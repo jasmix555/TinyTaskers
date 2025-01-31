@@ -86,7 +86,7 @@ const ChildListPopup = ({
                       <Image
                         priority
                         alt={child.name}
-                        className="rounded-full"
+                        className="h-full w-full bg-contain"
                         height={200}
                         src={child.picture || "/default-child.png"}
                         width={200}

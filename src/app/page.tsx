@@ -88,7 +88,7 @@ export default function HomePage() {
             <Image
               priority
               alt={selectedChild.name}
-              className="rounded-full"
+              className="h-full w-full bg-contain"
               height={200}
               src={selectedChild.picture || "/default-child.png"}
               width={200}
