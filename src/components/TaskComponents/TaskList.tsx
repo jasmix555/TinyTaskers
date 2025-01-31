@@ -1,4 +1,5 @@
-import {useState, useEffect} from "react";
+// src/components/TaskList.tsx
+import {useState} from "react";
 import {doc, getDoc, updateDoc, collection, addDoc, Timestamp} from "firebase/firestore";
 import Image from "next/image";
 import {FaPlus} from "react-icons/fa";
@@ -19,24 +20,17 @@ export default function TaskList() {
     loading: childrenLoading,
     error: childrenError,
   } = useFetchChildren(user ? user.uid : "");
-  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 
   const [sortOption, setSortOption] = useState("日付"); // デフォルトは日付順
   const [sortOrder, setSortOrder] = useState("desc"); // デフォルトは昇順
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    if (children.length > 0) {
-      setSelectedChildId(children[0].id); // 最初の子をデフォルトで選択
-    }
-  }, [children]);
 
   const {
     tasks,
     loading: tasksLoading,
     error: tasksError,
     refetch: refetchTasks,
-  } = useFetchTasks(selectedChildId || "");
+  } = useFetchTasks(user ? user.uid : ""); // Fetch tasks for all children
 
   const {deleteTask} = useDeleteTask();
   const {updateTask} = useUpdateTask();
@@ -124,10 +118,8 @@ export default function TaskList() {
 
   const handleSortOptionChange = (option: string) => {
     if (sortOption === option) {
-      // 同じオプションが選択された場合、並び順を切り替える
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      // 別のオプションが選ばれた場合、昇順に切り替える
       setSortOption(option);
       setSortOrder("asc");
     }
@@ -226,7 +218,6 @@ export default function TaskList() {
                     onClick={() => handleSortOptionChange("ステータス")}
                   >
                     <span>ステータス</span>
-
                     {sortOption === "ステータス" && (sortOrder === "asc" ? "↑" : "↓")}
                   </button>
                 </div>

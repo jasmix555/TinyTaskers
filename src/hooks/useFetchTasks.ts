@@ -17,11 +17,7 @@ export const useFetchTasks = (childId: string) => {
 
     setLoading(true);
     try {
-      const q = query(
-        collection(db, "tasks"),
-        where("userId", "==", user.uid),
-        where("childId", "==", childId),
-      ); // Fetch tasks for the specific child
+      const q = query(collection(db, "tasks"), where("userId", "==", user.uid)); // Fetch tasks for the specific child
       const querySnapshot = await getDocs(q);
       const tasksData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
