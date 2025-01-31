@@ -104,7 +104,7 @@ const ChildHistory = ({childId, userId}: ChildHistoryProps) => {
               >
                 {/* Purchased overlay */}
                 {entry.purchased && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <p className="text-2xl font-bold text-white">購入済み</p>
                   </div>
                 )}
