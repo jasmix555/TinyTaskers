@@ -105,7 +105,7 @@ export default function ChildDashboardPage({params}: {params: Promise<{id: strin
 
       {/* Rest of the layout */}
       <div className="grid px-4 pb-4 pt-4 sm:flex sm:flex-col md:grid md:h-[calc(100vh-88px)] md:grid-cols-5 md:gap-4">
-        <div className="col-span-3 h-full rounded-2xl bg-orange-200">
+        <div className="no-scrollbar col-span-3 h-full overflow-y-scroll rounded-2xl bg-orange-200">
           <ChildTasks childId={child.id} />
         </div>
         <div className="col-span-2 flex h-full flex-col gap-4">

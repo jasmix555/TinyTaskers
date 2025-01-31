@@ -26,7 +26,7 @@ export default function ChildTasks({childId}: ChildTasksProps) {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="h-full overflow-y-scroll p-4">
+    <div className="h-full p-4">
       <h2 className="px-4 pb-6 pt-2 text-2xl font-bold sm:text-2xl md:text-4xl">今日のクエスト</h2>
       {tasks.length === 0 ? (
         <p>今日タスクありません。</p>
